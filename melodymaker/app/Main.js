@@ -15,7 +15,7 @@
  */
 
 require(['domready', 'style/main.scss', 'grid/Grid', 'interface/Bottom', 'sound/Sequencer', 
-	'Tone/core/Transport', 'sound/Player', 'StartAudioContext'],
+	'Tone/core/Transport', 'sound/Player', 'node_modules/startaudiocontext'],
 function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartAudioContext) {
 	domReady(function() {
 
