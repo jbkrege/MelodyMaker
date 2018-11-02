@@ -43,6 +43,32 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 			grid.select(-1);
 		});
 
+		document.body.addEventListener('keyup', function(e) {
+			var key = e.which;
+			//
+			// Pause/play on spacebar
+			//
+			if (key === 32){
+				bottom._playClicked(e);
+			}
+			//
+			// Move last note on arrow press
+			//
+			else if (key === 37){
+				// Left arrow pressed
+				// grid.lastDragTile
+			}
+			else if (key === 39){
+				// Right arrow pressed
+			}
+			else if (key === 38){
+				// Up arrow pressed
+			}
+			else if (key === 40){
+				// Down arrow pressed
+			}
+		})
+
 		//send the ready message to the parent
 		var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 		var isAndroid = /Android/.test(navigator.userAgent) && !window.MSStream;
@@ -52,7 +78,7 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 			//make a full screen element and put it in front
 			var iOSTapper = document.createElement("div");
 			iOSTapper.id = "iOSTap";
-            document.body.appendChild(iOSTapper);
+			document.body.appendChild(iOSTapper);
 			new StartAudioContext(Transport.context, iOSTapper).then(function() {
 				iOSTapper.remove();
 				window.parent.postMessage('ready','*');

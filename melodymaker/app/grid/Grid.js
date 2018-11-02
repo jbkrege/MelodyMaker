@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI', "tween.js"],
-	function(gridStyle, Config, Colors, Tile, AI, TWEEN) {
+define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI', "tween.js", 'grid/ML'],
+	function(gridStyle, Config, Colors, Tile, AI, TWEEN, ML) {
 	var Grid = function(container) {
 
 		this.element = document.createElement('DIV');
@@ -64,7 +64,7 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 
 		//do the drawing
 		this.canvas.addEventListener('mousemove', this._hover.bind(this));
-		this.canvas.addEventListener('mousedown', this._clicked.bind(this));
+		this.canvas.addEventListener('mousedown', this._clicked.bind(this));  
         this.canvas.addEventListener('mouseup', this._mouseUp.bind(this));
 
         this.canvas.addEventListener('touchmove', this._hover.bind(this));
@@ -108,6 +108,8 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		this.draw();
 
 		this.onNote = function() {};
+
+		this.ml = ML();
 	};
 
 	Grid.prototype._resize = function() {
@@ -156,7 +158,7 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 
 		// Reset drag variables
 		this.mouseDrag = false;
-        this.lastDragTile = {x: null, y: null};
+        //this.lastDragTile = {x: null, y: null};
 	};
 
 	Grid.prototype._hover = function(e) {
@@ -169,7 +171,7 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		var tile = this._tiles[tilePos.x];
 
 		// Call click event on mousedrag
-		if (this.mouseDrag && (tilePos.x !== this.lastDragTile.x || tilePos.y !== this.lastDragTile.y)) {
+		if (this.mouseDrag && (this.lastDragTile.x !== undefined) && (tilePos.x !== this.lastDragTile.x || tilePos.y !== this.lastDragTile.y)) {
 			this.lastDragTile = tilePos;
 			this._clicked(e);
 		}
@@ -191,6 +193,9 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 	};
 
 	Grid.prototype._addTile = function(x, y, hover) {
+		if ((x == undefined) || (y == undefined)){
+			return
+		}
 		this._needsUpdate = true;
 		//if there's a tile already in that column
 		if (this._tiles[x]) {

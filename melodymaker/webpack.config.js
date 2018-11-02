@@ -20,40 +20,47 @@ var path = require("path");
 var PROD = JSON.parse(process.env.PROD_ENV || '0');
 
 module.exports = {
-	"context": __dirname,
-	entry: {
-		"Main": "app/Main",
-	},
-	output: {
-		filename: "./build/[name].js",
-		chunkFilename: "./build/[id].js",
-		sourceMapFilename : "[file].map",
-	},
-	resolve: {
-		root: __dirname,
-		modulesDirectories : ["style", "app", "third_party/Tone.js/", "third_party", "node_modules"],
-	},
-	plugins: PROD ? [
-	    new webpack.optimize.UglifyJsPlugin({minimize: true})
-	  ] : [],
-	 module: {
-		loaders: [
-			{
-				test: /\.scss$/,
-				loader: "style!css!autoprefixer-loader!sass"
-			},
-			{
-				test: /\.json$/,
-				loader: "json"
-			},
-			{
-				test: /\.(png|gif)$/,
-				loader: "url-loader",
-			}, 
-			{
-				test   : /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-				loader : "file-loader?name=images/font/[hash].[ext]"
-			}
-		]
-	}
+    "context": __dirname,
+    entry: {
+        "Main": "app/Main",
+    },
+    output: {
+        filename: "./build/[name].js",
+        chunkFilename: "./build/[id].js",
+        sourceMapFilename : "[file].map",
+    },
+    resolve: {
+        root: __dirname,
+        modulesDirectories : ["style", "app", "third_party/Tone.js/", "third_party", "node_modules"],
+    },
+    plugins: PROD ? [
+        new webpack.optimize.UglifyJsPlugin({minimize: true})
+      ] : [],
+     module: {
+        loaders: [
+            // {
+            //     test: /\.js$/,
+            //     loader: 'babel-loader',
+            //     // query: {
+            //     //     presets: ['es2015']
+            //     // }
+            // },
+            {
+                test: /\.scss$/,
+                loader: "style!css!autoprefixer-loader!sass"
+            },
+            {
+                test: /\.json$/,
+                loader: "json"
+            },
+            {
+                test: /\.(png|gif)$/,
+                loader: "url-loader",
+            }, 
+            {
+                test   : /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+                loader : "file-loader?name=images/font/[hash].[ext]"
+            }
+        ]
+    }
 };
