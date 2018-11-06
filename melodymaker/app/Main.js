@@ -15,14 +15,14 @@
  */
 
 require(['domready', 'style/main.scss', 'grid/Grid', 'interface/Bottom', 'sound/Sequencer', 
-	'Tone/core/Transport', 'sound/Player', 'node_modules/startaudiocontext'],
-function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartAudioContext) {
+	'Tone/core/Transport', 'sound/Player', 'node_modules/startaudiocontext', 'grid/ML'],
+function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartAudioContext, ML) {
 	domReady(function() {
 
 		window.parent.postMessage("loaded", "*");
-
-		var grid = new Grid(document.body);
-		var bottom = new Bottom(document.body);
+		var ml = new ML(document.body);
+		var grid = new Grid(document.body, ml);
+		var bottom = new Bottom(document.body, ml);
 
 		bottom.onDirection = function(dir) {
 			grid.setDirection(dir);

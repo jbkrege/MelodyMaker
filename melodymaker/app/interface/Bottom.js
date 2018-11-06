@@ -16,10 +16,8 @@
 
 define(['style/bottom.scss', 'interface/Slider', 'Tone/core/Transport', 'interface/Orientation'],
 function(bottomStyle, Slider, Transport, Orientation) {
-
-
-	var Bottom = function(container) {
-
+	var Bottom = function(container, ml) {
+		this.ml = ml;
 		this._element = document.createElement('div');
 		this._element.id = 'Bottom';
 		container.appendChild(this._element);
@@ -34,6 +32,14 @@ function(bottomStyle, Slider, Transport, Orientation) {
 		this._playButton.classList.add("icon-svg_play");
 		this._controlsContainer.appendChild(this._playButton);
 		this._playButton.addEventListener('click', this._playClicked.bind(this));
+
+		this._MLButton = document.createElement('div');
+		this._MLButton.id = 'MLButton';
+		this._MLButton.classList.add('passive')
+		this._MLButton.classList.add('Button')
+		this._MLButton.classList.add('icon-svg_computer');
+		this._controlsContainer.appendChild(this._MLButton);
+		this._MLButton.addEventListener('click',this._MLClicked.bind(this));
 
 		this._harmony = document.createElement('div');
 		this._harmony.id = 'Harmony';
@@ -52,6 +58,23 @@ function(bottomStyle, Slider, Transport, Orientation) {
 		this._orientation = new Orientation(this._rotated.bind(this));
 	};
 
+	Bottom.prototype._MLClicked = function(e) {
+		e.preventDefault();
+		console.log("ML Button Pressed");
+		if (this.ml.active === false){
+			this._MLButton.classList.remove('passive');
+			this._MLButton.classList.add('active');
+			this.ml.active = true;
+			if (this._directions[this._directionIndex] != 'none'){
+				this._directionClicked(e);
+			}
+		} else {
+			this._MLButton.classList.remove('active');
+			this._MLButton.classList.add('passive');
+			this.ml.active = false;
+		}
+	}
+
 	Bottom.prototype._playClicked = function(e) {
 		e.preventDefault();
 		if (Transport.state === 'started') {
@@ -68,6 +91,9 @@ function(bottomStyle, Slider, Transport, Orientation) {
 	};
 
 	Bottom.prototype._rotated = function() {
+		//
+		// For mobile
+		//
 		if (Transport.state === 'started') {
 			this._playButton.classList.remove('Playing');
 			this._playButton.classList.add('icon-svg_play');
@@ -83,6 +109,9 @@ function(bottomStyle, Slider, Transport, Orientation) {
 		this._harmony.classList.remove(formerDir);
 		this._directionIndex = (this._directionIndex + 1) % this._directions.length;
 		var dir = this._directions[this._directionIndex];
+		if ((dir != 'none') && (this.ml.active === true)){
+			this._MLClicked(e);
+		}
 		this._harmony.classList.add(dir);
 		this.onDirection(dir);
 	};

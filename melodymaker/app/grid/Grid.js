@@ -15,9 +15,9 @@
  */
 
 define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI', "tween.js", 'grid/ML'],
-	function(gridStyle, Config, Colors, Tile, AI, TWEEN, ML) {
-	var Grid = function(container) {
-
+	function(gridStyle, Config, Colors, Tile, AI, TWEEN) {
+	var Grid = function(container, ml) {
+		this.ml = ml;
 		this.element = document.createElement('DIV');
 		this.element.id = 'Grid';
 		container.appendChild(this.element);
@@ -108,8 +108,6 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		this.draw();
 
 		this.onNote = function() {};
-
-		this.ml = ML();
 	};
 
 	Grid.prototype._resize = function() {
@@ -216,6 +214,16 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 			this._ai.push(ai);
 		}
 	};
+
+	Grid.prototype.getState = function(){
+		var i;
+		ret = [];
+		for (i = 0; i < Config.gridWidth; i++){
+			var col = this.select(i);
+			console.log(col)
+			// console.log(ret.add(this.select(i))
+		}
+	}
 
 	Grid.prototype._removeTile = function(x, y, tile) {
 		//remove the AI associated with that tile

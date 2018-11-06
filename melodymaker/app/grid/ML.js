@@ -7,8 +7,9 @@
 
 define(['data/Colors', 'data/Config', 'Tone/core/Transport', 'node_modules/@magenta/music'],
     function(Colors, Config, Transport, mm) {
-    var ML = function() {
-        console.log("ML constructor called")
+    var ML = function(container) {
+        this.active = false;
+
         //a reference to the tile
         //this.tile = tile;
 
@@ -22,10 +23,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport', 'node_modules/@mage
 
         //this.GRID = GRID;
 
-        console.log("Initializing rnn");
         _initModel();
-        console.log("Sanity check")
-        console.log(this.rnn)
     };
 
     function _initModel(){
@@ -34,7 +32,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport', 'node_modules/@mage
         this.rnn = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn');
         console.log(this.rnn)
         this.rnn.initialize().then(function() {
-            console.log("RNN initialized");
+            // Go on...
         }).catch(new Error("Error initializing model"))
     }
     return ML;

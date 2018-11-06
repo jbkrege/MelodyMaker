@@ -43,9 +43,24 @@
 			color: white;
 		}
 
+		#MLButton.passive {
+			left: $buttonMargin * 2 + $buttonSize;
+			background-color: #fff;
+			font-size: 60px;
+			color: grey;
+
+		}
+
+		#MLButton.active {
+			left: $buttonMargin * 2 + $buttonSize;
+			background-color: $orange;
+			font-size: 60px;
+			color: white;
+		}
+
 		#Harmony {
 			position: absolute;
-			left: $buttonMargin * 2 + $buttonSize;
+			left: $buttonMargin * 3 + 2 * $buttonSize;
 			background-color: #fff;
 			background-image: url(../images/harmony_off.png);
 			background-size: 100% 100%;
@@ -58,7 +73,8 @@
 		}
 
 		$iconWidth : 15px;
-		$totalButtonWidth : $buttonSize * 2 + $buttonMargin * 4 + 10px;
+		$numButtons : 3;
+		$totalButtonWidth : $buttonSize * $numButtons + $buttonMargin * 2 * $numButtons + 10px;
 
 		#SliderContainer {
 			width: calc(100% - #{$totalButtonWidth + $iconWidth * 2});
