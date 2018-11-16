@@ -18,12 +18,20 @@ define(['data/Colors', 'data/Config'], function(Colors, Config) {
 
 	var tileMargin = Config.tileMargin;
 
-	var Tile = function(x, y, hover) {
+	var Tile = function(x, y, hover, ml, prob) {
 
 		this.x = x;
 		this.y = y;
 
 		this._hovered = hover || false;
+
+		if ((ml === undefined) || (prob === undefined)){
+			this.ml = false;
+			this.prob = null;
+		} else {
+			this.ml = true;
+			this.prob = prob;
+		}
 	};
 
 	Tile.prototype.draw = function(context, width, height, activeColumn) {
@@ -31,7 +39,15 @@ define(['data/Colors', 'data/Config'], function(Colors, Config) {
 		//get the note and color
 		var margin = tileMargin;
 		var note = Config.notes[this.y];
-		context.fillStyle = Colors[note];
+		if (this.ml === true){
+			context.fillStyle = Colors.blue;
+		}
+		else if (Config.singleColor === false){
+			context.fillStyle = Colors[note];	
+		} else {
+			context.fillStyle = Colors.gold;
+		}
+
 		context.beginPath();
 		context.fillRect(this.x * width + tileMargin, this.y * height + tileMargin, width - tileMargin * 2, height - tileMargin * 2);
 		if (this._hovered || this.x === activeColumn) {

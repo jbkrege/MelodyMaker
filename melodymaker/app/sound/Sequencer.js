@@ -22,7 +22,6 @@ define(['Tone/event/Sequence', 'data/Config'], function(Sequence, Config) {
 		for (var i = 0; i < Config.gridWidth; i++) {
 			steps.push(i);
 		}
-
 		this.seq = new Sequence(callback, steps, '8n').start(0);
 	};
 

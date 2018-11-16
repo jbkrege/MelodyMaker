@@ -20,8 +20,9 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 	domReady(function() {
 
 		window.parent.postMessage("loaded", "*");
-		var ml = new ML(document.body);
-		var grid = new Grid(document.body, ml);
+		var ml;
+		var grid = new Grid(document.body);
+		ml = new ML(document.body, grid);
 		var bottom = new Bottom(document.body, ml);
 
 		bottom.onDirection = function(dir) {

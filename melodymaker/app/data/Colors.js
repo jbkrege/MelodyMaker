@@ -28,6 +28,7 @@ define(function() {
 		'lightOrange' : '#996e19',
 		'blue' : 'rgb(22, 168, 240)',
 		'lightBlue' : 'rgb(131, 211, 248)',
+		'gold' : '#FFD700',
 		//keys
 		'C' : '#BF4FA8',
 		'C#' : '#8064c6',
@@ -45,6 +46,6 @@ define(function() {
 		'A' : '#F7943D',
 		'A#' : '#45b5a1',
 		'Bb' : '#45b5a1',
-		'B' : '#E33159',
+		'B' : '#E33159'
 	};
 });

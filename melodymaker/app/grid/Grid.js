@@ -15,9 +15,8 @@
  */
 
 define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI', "tween.js", 'grid/ML'],
-	function(gridStyle, Config, Colors, Tile, AI, TWEEN) {
-	var Grid = function(container, ml) {
-		this.ml = ml;
+	function(gridStyle, Config, Colors, Tile, AI, TWEEN, ML) {
+	var Grid = function(container) {
 		this.element = document.createElement('DIV');
 		this.element.id = 'Grid';
 		container.appendChild(this.element);
@@ -75,10 +74,10 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		 * all the tiles on the screen
 		 */
 		this._tiles = new Array(Config.gridWidth);
-
 		//all of the AI on the screen
 		this._ai = [];
-
+		// All the Magenta ML tiles on the screen
+		this._mlTiles = [];
 		/**
 		 * the x/y offset of the AI
 		 */
@@ -109,6 +108,12 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 
 		this.onNote = function() {};
 	};
+
+	Grid.prototype.removeML = function(){
+		for (var i = 0 ; i < this._mlTiles.length ; i++){
+			this._removeTile(this._mlTiles[i].x, this._mlTiles[i].y, this._mltiles[i]);
+		}
+	}
 
 	Grid.prototype._resize = function() {
 		this._needsUpdate = true;
@@ -190,13 +195,17 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		}
 	};
 
-	Grid.prototype._addTile = function(x, y, hover) {
+	Grid.prototype._addTile = function(x, y, hover, ml, prob) {
 		if ((x == undefined) || (y == undefined)){
 			return
 		}
 		this._needsUpdate = true;
 		//if there's a tile already in that column
-		if (this._tiles[x]) {
+		if (ml === true){
+			var t = new Tile(x, y, hover, prob);
+			this._mlTiles[x] = t;
+		}
+		else if (this._tiles[x]) {
 			var tile = this._tiles[x];
 			//and row, remove it
 			if (tile.y == y) {
@@ -213,6 +222,7 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 			this._tiles[x] = t;
 			this._ai.push(ai);
 		}
+		//console.log(this._tiles);
 	};
 
 	Grid.prototype.getState = function(){
@@ -220,9 +230,9 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		ret = [];
 		for (i = 0; i < Config.gridWidth; i++){
 			var col = this.select(i);
-			console.log(col)
-			// console.log(ret.add(this.select(i))
+			ret.push(col);
 		}
+		return ret;
 	}
 
 	Grid.prototype._removeTile = function(x, y, tile) {

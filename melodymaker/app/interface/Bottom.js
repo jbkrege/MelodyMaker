@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-define(['style/bottom.scss', 'interface/Slider', 'Tone/core/Transport', 'interface/Orientation'],
-function(bottomStyle, Slider, Transport, Orientation) {
+define(['style/bottom.scss', 'interface/Slider', 'Tone/core/Transport', 'interface/Orientation', 'grid/Grid'],
+function(bottomStyle, Slider, Transport, Orientation, Grid) {
 	var Bottom = function(container, ml) {
-		this.ml = ml;
+		this._ml = ml;
 		this._element = document.createElement('div');
 		this._element.id = 'Bottom';
 		container.appendChild(this._element);
@@ -61,17 +61,20 @@ function(bottomStyle, Slider, Transport, Orientation) {
 	Bottom.prototype._MLClicked = function(e) {
 		e.preventDefault();
 		console.log("ML Button Pressed");
-		if (this.ml.active === false){
+		if (this._ml.active === false){
+			// Set buttins in interface
 			this._MLButton.classList.remove('passive');
 			this._MLButton.classList.add('active');
-			this.ml.active = true;
+			this._ml.active = true;
 			if (this._directions[this._directionIndex] != 'none'){
 				this._directionClicked(e);
 			}
+			this._ml.generatePattern();
 		} else {
 			this._MLButton.classList.remove('active');
 			this._MLButton.classList.add('passive');
-			this.ml.active = false;
+			this._ml.active = false;
+			Grid.removeML();
 		}
 	}
 
