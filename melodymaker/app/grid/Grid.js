@@ -16,7 +16,7 @@
 
 define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI', "tween.js", 'grid/ML'],
 	function(gridStyle, Config, Colors, Tile, AI, TWEEN, ML) {
-	var Grid = function(container) {
+	var Grid = function(container, grid) {
 		this.element = document.createElement('DIV');
 		this.element.id = 'Grid';
 		container.appendChild(this.element);
@@ -77,7 +77,7 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		//all of the AI on the screen
 		this._ai = [];
 		// All the Magenta ML tiles on the screen
-		this._mlTiles = [];
+		this._mlTiles = new Array(Config.gridWidth);
 		/**
 		 * the x/y offset of the AI
 		 */
@@ -110,8 +110,9 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 	};
 
 	Grid.prototype.removeML = function(){
+		this._needsUpdate = true;
 		for (var i = 0 ; i < this._mlTiles.length ; i++){
-			this._removeTile(this._mlTiles[i].x, this._mlTiles[i].y, this._mltiles[i]);
+			this._mlTiles[i] = null;
 		}
 	}
 
@@ -199,12 +200,15 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		if ((x == undefined) || (y == undefined)){
 			return
 		}
+		console.log("add tile called",x,y,hover,ml,prob);
 		this._needsUpdate = true;
-		//if there's a tile already in that column
+
+		// if ML, then add the tile
 		if (ml === true){
-			var t = new Tile(x, y, hover, prob);
+			var t = new Tile(x, y, hover, ml, prob);
 			this._mlTiles[x] = t;
 		}
+		//if there's a tile already in that column
 		else if (this._tiles[x]) {
 			var tile = this._tiles[x];
 			//and row, remove it
@@ -215,25 +219,33 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 				this._removeTile(x, y, tile);
 				this._addTile(x, y, hover);
 			}
+		} 
+		// if there's an ML tile in that column
+		else if (this._mlTiles[x]){
+			var tile = this._mlTiles[x];
+			this._removeTile(x, y, tile);
+			this._addTile(x, y, hover);
+		// else, just add a normal tile
 		} else {
 			var t = new Tile(x, y, hover);
 			this.onNote(y);
-			var ai = new AI(t, this);
+			var ai = new AI(t, this); 
 			this._tiles[x] = t;
 			this._ai.push(ai);
 		}
-		//console.log(this._tiles);
 	};
 
 	Grid.prototype.getState = function(){
-		var i;
-		ret = [];
+		//
+		// Used by ML to get the present state
+		//
+		var i, ret = [];
 		for (i = 0; i < Config.gridWidth; i++){
 			var col = this.select(i);
 			ret.push(col);
 		}
 		return ret;
-	}
+	};
 
 	Grid.prototype._removeTile = function(x, y, tile) {
 		//remove the AI associated with that tile
@@ -246,6 +258,7 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 			}
 		}
 		this._tiles[x] = null;
+		this._mlTiles[x] = null
 		this._needsUpdate = true;
 	};
 
@@ -264,6 +277,7 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 			}
 			this._drawAI();
 			this._drawTiles();
+			this._drawML();
 			TWEEN.update();
 		}
 	};
@@ -291,6 +305,15 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		}
 	};
 
+	Grid.prototype._drawML = function() {
+		for (var i = 0; i < this._mlTiles.length; i++) {
+			var tile = this._mlTiles[i];
+			if (tile) {
+				tile.draw(this.context, this.tileWidth, this.tileHeight, this._activeColumn);
+			}
+		}
+	};
+
 	Grid.prototype._drawAI = function() {
 		for (var i = 0; i < this._ai.length; i++) {
 			this._ai[i].draw(this.context, this.tileWidth, this.tileHeight, this._activeColumn, this._aiOffset, this._direction);
@@ -311,6 +334,10 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		};
 		if (this._tiles[column]) {
 			ret.melody = (this._tiles[column].y);
+		}
+		// if playPredictedNotes setting is on, and there is an ML tile in that column, then play it
+		else if ((Config.playPredictedNotes) && (this._mlTiles[column])) {
+			ret.melody = (this._mlTiles[column].y);
 		}
 		for (var i = 0; i < this._ai.length; i++) {
 			var ai = this._ai[i];

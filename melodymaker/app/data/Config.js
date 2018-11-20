@@ -24,5 +24,6 @@ define({
 	'modelUrls' : [// A 36-class one-hot MelodyRNN model. Converted from http://download.magenta.tensorflow.org/models/basic_rnn.mag.
 					"https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
 				  ],
-	'singleColor' : true
+	'singleColor' : true,
+	'playPredictedNotes' : true
 });

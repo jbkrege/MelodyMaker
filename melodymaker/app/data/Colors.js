@@ -17,6 +17,9 @@
 define(function() {
 
 	return {
+		// ML colors
+		'ml' : 'rgb(72,133,237,.5)',
+		'singleColor' : 'rgb(244,194,13)',
 		//shades
 		'charcoal' : 'rgb(50,51,52)',
 		'lightGrey' : 'rgb(223,224,225)',

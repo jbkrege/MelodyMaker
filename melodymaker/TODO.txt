@@ -1,0 +1,9 @@
+TODO.txt
+
+Functionality
+ - ML when empty
+ - Add alert when nothing predicted
+ - Predict after aver note added, if button is on
+
+UX
+ - Add keyboard for reference

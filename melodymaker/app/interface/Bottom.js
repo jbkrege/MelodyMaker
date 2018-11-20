@@ -16,8 +16,8 @@
 
 define(['style/bottom.scss', 'interface/Slider', 'Tone/core/Transport', 'interface/Orientation', 'grid/Grid'],
 function(bottomStyle, Slider, Transport, Orientation, Grid) {
-	var Bottom = function(container, ml) {
-		this._ml = ml;
+	var Bottom = function(container) {
+		// this._ml = ml;
 		this._element = document.createElement('div');
 		this._element.id = 'Bottom';
 		container.appendChild(this._element);
@@ -40,6 +40,7 @@ function(bottomStyle, Slider, Transport, Orientation, Grid) {
 		this._MLButton.classList.add('icon-svg_computer');
 		this._controlsContainer.appendChild(this._MLButton);
 		this._MLButton.addEventListener('click',this._MLClicked.bind(this));
+		this.MLActive = false;
 
 		this._harmony = document.createElement('div');
 		this._harmony.id = 'Harmony';
@@ -54,27 +55,30 @@ function(bottomStyle, Slider, Transport, Orientation, Grid) {
 		this.slider = new Slider(this._controlsContainer);
 
 		this.onDirection = function() {};
+		this.removeML = function() {};
+		this.generatePattern = function() {};
 
 		this._orientation = new Orientation(this._rotated.bind(this));
+
 	};
 
 	Bottom.prototype._MLClicked = function(e) {
 		e.preventDefault();
 		console.log("ML Button Pressed");
-		if (this._ml.active === false){
+		if (this.MLActive === false){
 			// Set buttins in interface
 			this._MLButton.classList.remove('passive');
 			this._MLButton.classList.add('active');
-			this._ml.active = true;
+			this.MLActive = true;
 			if (this._directions[this._directionIndex] != 'none'){
 				this._directionClicked(e);
 			}
-			this._ml.generatePattern();
+			this.generatePattern();
 		} else {
 			this._MLButton.classList.remove('active');
 			this._MLButton.classList.add('passive');
-			this._ml.active = false;
-			Grid.removeML();
+			this.MLActive = false;
+			this.removeML();
 		}
 	}
 
@@ -112,7 +116,7 @@ function(bottomStyle, Slider, Transport, Orientation, Grid) {
 		this._harmony.classList.remove(formerDir);
 		this._directionIndex = (this._directionIndex + 1) % this._directions.length;
 		var dir = this._directions[this._directionIndex];
-		if ((dir != 'none') && (this.ml.active === true)){
+		if ((dir != 'none') && (this.MLActive === true)){
 			this._MLClicked(e);
 		}
 		this._harmony.classList.add(dir);

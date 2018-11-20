@@ -25,7 +25,7 @@ define(['data/Colors', 'data/Config'], function(Colors, Config) {
 
 		this._hovered = hover || false;
 
-		if ((ml === undefined) || (prob === undefined)){
+		if ((ml === undefined) || (ml !== true) || (prob === undefined)){
 			this.ml = false;
 			this.prob = null;
 		} else {
@@ -40,12 +40,12 @@ define(['data/Colors', 'data/Config'], function(Colors, Config) {
 		var margin = tileMargin;
 		var note = Config.notes[this.y];
 		if (this.ml === true){
-			context.fillStyle = Colors.blue;
+			context.fillStyle = Colors.ml;
 		}
 		else if (Config.singleColor === false){
 			context.fillStyle = Colors[note];	
 		} else {
-			context.fillStyle = Colors.gold;
+			context.fillStyle = Colors.singleColor;
 		}
 
 		context.beginPath();

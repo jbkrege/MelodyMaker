@@ -5,9 +5,10 @@
 * 
  */
 
-define(['data/Colors', 'data/Config', 'Tone/core/Transport', 'node_modules/@magenta/music'],
-    function(Colors, Config, Transport, mm) {
-    var ML = function(container, grid) {
+define(['data/Colors', 'data/Config', 'Tone/core/Transport',
+ 'node_modules/@magenta/music', 'grid/Grid'],
+    function(Colors, Config, Transport, mm, Grid) {
+    var ML = function(container) {
         this.active = false;
 
         //a reference to the tile
@@ -23,93 +24,22 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport', 'node_modules/@mage
 
         this.temperature = 1;
 
-        this._grid = grid;
+        this.addTile = function() {};
+        this.getGridState = function() {};
 
-        _initModel();
+        this._initModel();
     };
 
-    function _initModel(){
-        console.log(mm);
+    ML.prototype._initModel = function(){
+        // TODO make model source switchable
         //this.rnn = new MusicRNN(Config.modelUrls[0]);
         this.rnn = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn');
         console.log(this.rnn);
         this.rnn.initialize();
-    }
-
-    ML.prototype.generatePattern = function(){
-        var seed = this._grid.getState();
-        var seedLength = noteSequenceLength(seed);
-        var seedSeq = toNoteSequence(seed, seedLength);
-        console.log("seed: ",seedSeq);
-        return rnn
-          .continueSequence(seedSeq, (Config.gridWidth-seedLength), this.temperature)
-          .then(function(result) {console.log("result",result)});
-        // var seed = this._grid.
-    }
-
-
-    function fromNoteSequence(seq, patternLength) {
-        // Not implemented
-
-        // var res = _.times(patternLength, () => []);
-        // for (var { pitch, quantizedStartStep } of seq.notes) {
-        //   res[quantizedStartStep].push(reverseMidiMapping.get(pitch));
-        // }
-        // return res;
-    }
-
-    function noteSequenceLength(pattern){
-        for (var i = (pattern.length-1) ; i >= 0 ; i--){
-            if (pattern[i]['melody'] != -1){
-                return (i + 1);
-            }
-        }
-    }
-
-    function toNoteSequence(pattern, sequenceLength) {
-        // Search sequence in reverse order to find the last note,
-        // and therefore the length
-        return mm.sequences.quantizeNoteSequence(
-            {
-                ticksPerQuarter: 220,
-                totalTime: sequenceLength,
-                timeSignatures: [
-                  {
-                    time: 0,
-                    numerator: 4,
-                    denominator: 4
-                  }
-                ],
-                tempos: [
-                  {
-                    time: 0,
-                    qpm: 120
-                  }
-                ],
-                quantizationInfo: {"stepsPerQuarter" : 2},
-                notes: pattern.map(function (x, i) {
-                    if (x['melody'] != -1){
-                        return {
-                        pitch: noteToMidiNumber(Config.pitches[x['melody']]),
-                        startTime: i * 0.5,
-                        endTime: (i + 1) * 0.5
-                        };
-                    } else {
-                        return -1;
-                    }
-                }).filter(function(x){
-                    if (x === -1){
-                        return false;
-                    } else {
-                        return true;
-                    }
-                })
-            },
-            1
-        );
-    }
+    };
 
     function noteToMidiNumber(noteName) {
+        'use strict'; // see strict mode
         // 
         // Takes a two char string as input, i.e. "C4"
         //  returns the midi number associated with that note i.e. 60
@@ -132,9 +62,105 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport', 'node_modules/@mage
             }
         }
         return res;
-    }
+    };
 
-    function midiNumbertoNote(num){
+
+    ML.prototype._toNoteSequence = function(pattern, sequenceLength) {
+        console.log(this);
+        // Search sequence in reverse order to find the last note,
+        // and therefore the length
+        return mm.sequences.quantizeNoteSequence(
+            {
+                ticksPerQuarter: 220,
+                totalTime: sequenceLength,
+                timeSignatures: [
+                  {
+                    time: 0,
+                    numerator: 4,
+                    denominator: 4
+                  }
+                ],
+                tempos: [
+                  {
+                    time: 0,
+                    qpm: 120
+                  }
+                ],
+                quantizationInfo: {"stepsPerQuarter" : 2},
+                notes: pattern.map(function (x, i) {
+                    // empty list
+                    if (x === undefined){
+                        return
+                    }
+                    // Make required dict-like object
+                    else if (x['melody'] != -1){
+                        return {
+                        pitch: noteToMidiNumber(Config.pitches[x['melody']]),
+                        startTime: i * 0.5,
+                        endTime: (i + 1) * 0.5
+                        };
+                    // No note, fill with -1 so that it can be filtered out
+                    } else {
+                        return -1;
+                    }
+                    // Remove space filling -1's 
+                }).filter(function(x){
+                    if (x === -1){
+                        return false;
+                    } else {
+                        return true;
+                    }
+                })
+            },
+            1
+        );
+    };
+
+
+    ML.prototype.generatePattern = function(){
+        var thisML = this;
+        var seed = this.getGridState();
+        var seedLength = this.noteSequenceLength(seed);
+        var seedSeq;
+        if (seedLength > 0){
+            seedSeq = this._toNoteSequence(seed, seedLength);
+            console.log("seed: ",seedSeq); 
+        } else {
+            seedSeq = [];
+        }
+        this.rnn
+            .continueSequence(seedSeq, (Config.gridWidth-seedLength), thisML.temperature)
+            .then(function(result) {
+                console.log("Predicted pattern",result);
+                if (result['notes'].length !== 0){
+                    var predictedNotes = thisML.fromNoteSequence(result);
+                    for (var i = 0 ; i < predictedNotes.length ; i++) {
+                        if (predictedNotes[i] !== -1){
+                            thisML.addTileWrapper(seedLength+i,predictedNotes[i], false, true, 1);
+                        }
+                    }
+                }
+            });
+    };
+
+    ML.prototype.addTileWrapper = function(x, y, hover, ml, prob){
+        console.log("ML Adding tile :",x,y);
+        this.addTile(x, y, hover, ml, prob);
+    };
+
+    ML.prototype.noteSequenceLength = function(pattern){
+        if (pattern){
+            for (var i = (pattern.length-1) ; i >= 0 ; i--){
+                if (pattern[i]['melody'] != -1){
+                    return (i + 1);
+                }
+            }    
+        } else {
+            return 0;
+        }
+    };
+
+    ML.prototype.midiNumberToNote = function(num){
         var noteEncodings = {'0' : 'C',
                              '2' : 'D',
                              '4' : 'E',
@@ -143,49 +169,31 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport', 'node_modules/@mage
                              '9' : 'A',
                              '11' : 'B'};
         var note = num%12;
-        var oct = (num-note)/12;
+        var oct = (num-note)/12-1;
         var note = noteEncodings[note.toString()];
+        console.log("midiNumbertoNote",num,"->",note+oct);
         return (note+oct);
-    }
+    };
 
 
-    function fromNoteSequence(pattern){
-        res = [];
-        notes =  pattern['notes'];
-        for (var note = notes.pop(); notes.length > 0; note = notes.pop()){
-
-        }  
-    }
+    ML.prototype.fromNoteSequence = function(pattern){
+        //**
+        //* Converts Magenta pattern into an array with each element representing 
+        //* the predicted y coordinate in that location.
+        //* If no note is predicted in a certain grid location,
+        //*  then -1 is put in the array as a placeholder
+        //*
+        var res = [], notes = pattern['notes'], currNoteIndex = 0;
+        for (var step = 0 ; step < pattern['totalQuantizedSteps'] ; step++){
+            if ((currNoteIndex < (notes.length-1)) && (step === notes[currNoteIndex]['quantizedStartStep'])){
+                res.push(Config.pitches.indexOf(this.midiNumberToNote(notes[currNoteIndex]['pitch'])));
+                currNoteIndex++;
+            } else {
+                res.push(-1);
+            }
+        }
+        return res;
+    };
 
     return ML;
-})
-
-
-// var state = {
-//   patternLength: 32,
-//   seedLength: 4,
-//   swing: 0.55,
-//   pattern: [[0], [], [2]].concat(_.times(32, i => [])),
-//   tempo: Transport.bpm.value
-// };
-
-// function generatePattern(seed, length) {
-//   let seedSeq = toNoteSequence(seed);
-//   return rnn
-//     .continueSequence(seedSeq, length, temperature)
-//     .then(r => seed.concat(fromNoteSequence(r, length)));
-// }
-
-// 
-// PROMICE SYNTAX
-//
-// doSomething().then(function(result) {
-// return doSomethingElse(result);
-// })
-// .then(function(newResult) {
-// return doThirdThing(newResult);
-// })
-// .then(function(finalResult) {
-// console.log('Got the final result: ' + finalResult);
-// })
-// .catch(failureCallback);
+});

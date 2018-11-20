@@ -20,13 +20,29 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 	domReady(function() {
 
 		window.parent.postMessage("loaded", "*");
-		var ml;
 		var grid = new Grid(document.body);
-		ml = new ML(document.body, grid);
-		var bottom = new Bottom(document.body, ml);
+		var ml = new ML(document.body);
+		var bottom = new Bottom(document.body);
 
 		bottom.onDirection = function(dir) {
 			grid.setDirection(dir);
+		};
+
+		bottom.removeML = function() {
+			grid.removeML();
+		};
+
+		ml.addTileWrapper = function(x, y, hover, ml, prob){
+			console.log("made it into main");
+			grid._addTile(x, y, hover, ml, prob);
+		};
+
+		ml.getGridState = function(){
+			return grid.getState();
+		};
+
+		bottom.generatePattern = function() {
+			ml.generatePattern();
 		};
 
 		var player = new Player();
