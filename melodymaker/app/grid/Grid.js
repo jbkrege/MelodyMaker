@@ -200,7 +200,6 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		if ((x == undefined) || (y == undefined)){
 			return
 		}
-		console.log("add tile called",x,y,hover,ml,prob);
 		this._needsUpdate = true;
 
 		// if ML, then add the tile

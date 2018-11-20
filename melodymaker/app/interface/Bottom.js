@@ -70,9 +70,9 @@ function(bottomStyle, Slider, Transport, Orientation, Grid) {
 			this._MLButton.classList.remove('passive');
 			this._MLButton.classList.add('active');
 			this.MLActive = true;
-			if (this._directions[this._directionIndex] != 'none'){
-				this._directionClicked(e);
-			}
+			// if (this._directions[this._directionIndex] != 'none'){
+			// 	this._directionClicked(e);
+			// }
 			this.generatePattern();
 		} else {
 			this._MLButton.classList.remove('active');
@@ -116,9 +116,9 @@ function(bottomStyle, Slider, Transport, Orientation, Grid) {
 		this._harmony.classList.remove(formerDir);
 		this._directionIndex = (this._directionIndex + 1) % this._directions.length;
 		var dir = this._directions[this._directionIndex];
-		if ((dir != 'none') && (this.MLActive === true)){
-			this._MLClicked(e);
-		}
+		// if ((dir != 'none') && (this.MLActive === true)){
+		// 	this._MLClicked(e);
+		// }
 		this._harmony.classList.add(dir);
 		this.onDirection(dir);
 	};

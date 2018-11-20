@@ -2,8 +2,13 @@ TODO.txt
 
 Functionality
  - ML when empty
- - Add alert when nothing predicted
- - Predict after aver note added, if button is on
-
+ - Add double click functionality
+ 	- Double clicking makes button stick and makes model predict after every note added
+ 	- Single click does not stick, removes previous ML, paints new ML squares
+ - Add temperature dial
+ - Change tempo to a dial
 UX
  - Add keyboard for reference
+
+Complete
+ - Add alert when nothing predicted

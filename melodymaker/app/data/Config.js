@@ -25,5 +25,6 @@ define({
 					"https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
 				  ],
 	'singleColor' : true,
-	'playPredictedNotes' : true
+	'playPredictedNotes' : true,
+	'stepsPerQuarter' : 2
 });

@@ -34,7 +34,6 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
         // TODO make model source switchable
         //this.rnn = new MusicRNN(Config.modelUrls[0]);
         this.rnn = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn');
-        console.log(this.rnn);
         this.rnn.initialize();
     };
 
@@ -66,9 +65,6 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
 
 
     ML.prototype._toNoteSequence = function(pattern, sequenceLength) {
-        console.log(this);
-        // Search sequence in reverse order to find the last note,
-        // and therefore the length
         return mm.sequences.quantizeNoteSequence(
             {
                 ticksPerQuarter: 220,
@@ -86,14 +82,10 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
                     qpm: 120
                   }
                 ],
-                quantizationInfo: {"stepsPerQuarter" : 2},
+                quantizationInfo: {"stepsPerQuarter" : Config.stepsPerQuarter},
                 notes: pattern.map(function (x, i) {
-                    // empty list
-                    if (x === undefined){
-                        return
-                    }
                     // Make required dict-like object
-                    else if (x['melody'] != -1){
+                    if (x['melody'] != -1){
                         return {
                         pitch: noteToMidiNumber(Config.pitches[x['melody']]),
                         startTime: i * 0.5,
@@ -126,7 +118,11 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
             seedSeq = this._toNoteSequence(seed, seedLength);
             console.log("seed: ",seedSeq); 
         } else {
-            seedSeq = [];
+            console.log("SETTING TO NO SEED");
+            seedSeq = mm.sequences.quantizeNoteSequence(
+                {quantizationInfo : {"stepsPerQuarter" : Config.stepsPerQuarter}}
+                , 1
+                );
         }
         this.rnn
             .continueSequence(seedSeq, (Config.gridWidth-seedLength), thisML.temperature)
@@ -136,16 +132,14 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
                     var predictedNotes = thisML.fromNoteSequence(result);
                     for (var i = 0 ; i < predictedNotes.length ; i++) {
                         if (predictedNotes[i] !== -1){
-                            thisML.addTileWrapper(seedLength+i,predictedNotes[i], false, true, 1);
+                            thisML.addTile(seedLength+i,predictedNotes[i], false, true, 1);
                         }
                     }
+                } else {
+                    // Alert the user, so that they don't think its broken
+                    setTimeout(function() { alert("The AI likes the melody as is, and doesn't predict anything new."); }, 1);
                 }
             });
-    };
-
-    ML.prototype.addTileWrapper = function(x, y, hover, ml, prob){
-        console.log("ML Adding tile :",x,y);
-        this.addTile(x, y, hover, ml, prob);
     };
 
     ML.prototype.noteSequenceLength = function(pattern){

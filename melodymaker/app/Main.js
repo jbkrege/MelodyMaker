@@ -32,8 +32,7 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 			grid.removeML();
 		};
 
-		ml.addTileWrapper = function(x, y, hover, ml, prob){
-			console.log("made it into main");
+		ml.addTile = function(x, y, hover, ml, prob){
 			grid._addTile(x, y, hover, ml, prob);
 		};
 
