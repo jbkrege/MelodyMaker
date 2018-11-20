@@ -186,7 +186,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
         var res = [], notes = pattern['notes'], currNoteIndex = 0;
         for (var step = 0 ; step < pattern['totalQuantizedSteps'] ; step++){
             if ((currNoteIndex < (notes.length-1)) && (step === notes[currNoteIndex]['quantizedStartStep'])){
-                res.push(Config.pitches.indexOf(this.midiNumberToNote(notes[currNoteIndex]['pitch'])));
+                res.push(Config.gridHeight - (1 + Config.pitches.indexOf(this.midiNumberToNote(notes[currNoteIndex]['pitch']))));
                 currNoteIndex++;
             } else {
                 res.push(-1);
