@@ -116,7 +116,6 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
         var seedSeq;
         if (seedLength > 0){
             seedSeq = this._toNoteSequence(seed, seedLength);
-            console.log("seed: ",seedSeq); 
         } else {
             console.log("SETTING TO NO SEED");
             seedSeq = mm.sequences.quantizeNoteSequence(
@@ -127,7 +126,6 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
         this.rnn
             .continueSequence(seedSeq, (Config.gridWidth-seedLength), thisML.temperature)
             .then(function(result) {
-                console.log("Predicted pattern",result);
                 if (result['notes'].length !== 0){
                     var predictedNotes = thisML.fromNoteSequence(result);
                     for (var i = 0 ; i < predictedNotes.length ; i++) {
@@ -165,7 +163,6 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
         var note = num%12;
         var oct = (num-note)/12-1;
         var note = noteEncodings[note.toString()];
-        console.log("midiNumbertoNote",num,"->",note+oct);
         return (note+oct);
     };
 

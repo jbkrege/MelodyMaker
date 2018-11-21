@@ -9,6 +9,7 @@ Functionality
  - Change tempo to a dial
 UX
  - Add keyboard for reference
+ - Arrow keys move boxes
 
 Complete
  - Add alert when nothing predicted
