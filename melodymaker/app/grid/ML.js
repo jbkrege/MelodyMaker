@@ -10,7 +10,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
     function(Colors, Config, Transport, mm, Grid) {
     var ML = function(container) {
         this.active = false;
-
+        this.numPredictionTries = 5;
         //a reference to the tile
         //this.tile = tile;
 
@@ -123,21 +123,30 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
                 , 1
                 );
         }
-        this.rnn
-            .continueSequence(seedSeq, (Config.gridWidth-seedLength), thisML.temperature)
-            .then(function(result) {
-                if (result['notes'].length !== 0){
-                    var predictedNotes = thisML.fromNoteSequence(result);
-                    for (var i = 0 ; i < predictedNotes.length ; i++) {
-                        if (predictedNotes[i] !== -1){
-                            thisML.addTile(seedLength+i,predictedNotes[i], false, true, 1);
+        var emptySearch = true;
+        for (var i = 0; i < this.numPredictionTries; i++){
+            this.rnn
+                .continueSequence(seedSeq, (Config.gridWidth-seedLength), thisML.temperature)
+                .then(function(result) {
+                    if (result['notes'].length !== 0){
+                        var predictedNotes = thisML.fromNoteSequence(result);
+                        for (var i = 0 ; i < predictedNotes.length ; i++) {
+                            if (predictedNotes[i] !== -1){
+                                thisML.addTile(seedLength+i,predictedNotes[i], false, true, 1);
+                            }
                         }
+                        emptySearch = false;
+                        break;
+                    } else {
+                        //Nothing, let the loop try again
                     }
-                } else {
-                    // Alert the user, so that they don't think its broken
-                    setTimeout(function() { alert("The AI likes the melody as is, and doesn't predict anything new."); }, 1);
-                }
-            });
+                });
+        }
+        if (emptySearch === true){
+            // Alert the user, so that they don't think its broken
+            // TODO: Get a better alert (i.e. interface/FadeAlert.js)
+            setTimeout(function() { alert("The AI likes the melody as is, and doesn't predict anything new."); }, 1);
+        }
     };
 
     ML.prototype.noteSequenceLength = function(pattern){
