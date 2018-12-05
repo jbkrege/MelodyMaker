@@ -109,29 +109,32 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
     };
 
     ML.prototype.generatePattern = function(temperature){
-        console.log("calltemp: ",temperature);
         this.temperature = temperature;
         var thisML = this;
         var seed = this.getGridState();
         var seedLength = this.noteSequenceLength(seed);
         var seedSeq;
-        if (seedLength > 0){
-            seedSeq = this._toNoteSequence(seed, seedLength);
-        } else {
-            console.log("SETTING TO NO SEED");
-            seedSeq = mm.sequences.quantizeNoteSequence(
-                {quantizationInfo : {"stepsPerQuarter" : Config.stepsPerQuarter}}
-                , 1
-                );
+        if (!seedLength){
+            console.log("Picking a random note to seed");
+            var randomNote = Math.floor(Config.gridHeight * Math.random());
+            seed = [{"melody": randomNote, "harmony":-1}];
+            seedLength = 1;
+            thisML.addTile(0,randomNote, false, true, 1);
+            // OR try to pass a sequence of zero length. currently this throws error
+            // seedSeq = mm.sequences.quantizeNoteSequence({quantizationInfo : {"stepsPerQuarter" : Config.stepsPerQuarter}}, 0);
         }
+        seedSeq = this._toNoteSequence(seed, seedLength);
+
+        // Keep searching until the model predicts something
         var emptySearch = true;
-        console.log("thisML.temperature",thisML.temperature);
         for (var i = 0; i < this.numPredictionTries; i++){
             this.rnn
                 .continueSequence(seedSeq, (Config.gridWidth-seedLength), thisML.temperature)
                 .then(function(result) {
                     if (result['notes'].length !== 0){
+                        // Convert protobuf to array
                         var predictedNotes = thisML.fromNoteSequence(result);
+                        // Iterate through array and add notes to grid
                         for (var i = 0 ; i < predictedNotes.length ; i++) {
                             if (predictedNotes[i] !== -1){
                                 thisML.addTile(seedLength+i,predictedNotes[i], false, true, 1);

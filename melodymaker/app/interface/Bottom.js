@@ -75,24 +75,15 @@ function(bottomStyle, Slider, Transport, Orientation, Grid, PrecisionInputs, Kno
 		});
 		this._temperatureKnob.value = 50;
 		this._controlsContainer.appendChild(this._temperatureKnob);
-		this._temperatureKnob.onchange = this._tempChange;
 	};
-
-	Bottom.prototype._tempChange = function() {
-		// this = the knob Input. NOT Bottom.
-		console.log(this.parentNode.temperature);
-		this.parentNode.temperature = this.value;
-	}
 
 	Bottom.prototype._MLClicked = function(e) {
 		e.preventDefault();
-		console.log("ML Button Pressed");
 		if (this.MLActive === false){
 			// Set buttins in interface
 			this._MLButton.classList.remove('passive');
 			this._MLButton.classList.add('active');
 			this.MLActive = true;
-			console.log("BottomTemp",this._temperatureKnob.value);
 			this.generatePattern(this._temperatureKnob.value);
 		} else {
 			this._MLButton.classList.remove('active');
