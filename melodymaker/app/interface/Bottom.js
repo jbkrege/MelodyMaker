@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-define(['style/bottom.scss', 'interface/Slider', 'Tone/core/Transport', 'interface/Orientation', 'grid/Grid'],
-function(bottomStyle, Slider, Transport, Orientation, Grid) {
+define(['style/bottom.scss', 'interface/Slider', 'Tone/core/Transport', 'interface/Orientation', 'grid/Grid', 'node_modules/precision-inputs/scripts/precision-inputs.base', 'node_modules/knob/index'],
+function(bottomStyle, Slider, Transport, Orientation, Grid, PrecisionInputs, Knob) {
 	var Bottom = function(container) {
 		// this._ml = ml;
 		this._element = document.createElement('div');
 		this._element.id = 'Bottom';
 		container.appendChild(this._element);
+		this.container = container;
 
 		this._controlsContainer = document.createElement('div');
 		this._controlsContainer.id = 'Controls';
@@ -60,7 +61,28 @@ function(bottomStyle, Slider, Transport, Orientation, Grid) {
 
 		this._orientation = new Orientation(this._rotated.bind(this));
 
+		// Knob docs: https://www.npmjs.com/package/knob
+		this._temperatureKnob = Knob({
+			label: 'Temperature',
+			className: 'LofiKnob',
+			value: 50,
+			angleOffset: -125,
+			angleArc: 250,
+			min: 0,
+			max: 100,
+			step: 1,
+			width: 60
+		});
+		this._temperatureKnob.value = 50;
+		this._controlsContainer.appendChild(this._temperatureKnob);
+		this._temperatureKnob.onchange = this._tempChange;
 	};
+
+	Bottom.prototype._tempChange = function() {
+		// this = the knob Input. NOT Bottom.
+		console.log(this.parentNode.temperature);
+		this.parentNode.temperature = this.value;
+	}
 
 	Bottom.prototype._MLClicked = function(e) {
 		e.preventDefault();
@@ -70,10 +92,8 @@ function(bottomStyle, Slider, Transport, Orientation, Grid) {
 			this._MLButton.classList.remove('passive');
 			this._MLButton.classList.add('active');
 			this.MLActive = true;
-			// if (this._directions[this._directionIndex] != 'none'){
-			// 	this._directionClicked(e);
-			// }
-			this.generatePattern();
+			console.log("BottomTemp",this._temperatureKnob.value);
+			this.generatePattern(this._temperatureKnob.value);
 		} else {
 			this._MLButton.classList.remove('active');
 			this._MLButton.classList.add('passive');

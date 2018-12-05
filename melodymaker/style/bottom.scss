@@ -19,6 +19,12 @@
 		margin-right: auto;
 		height: 100%;
 
+		.LofiKnob {
+			position: absolute;
+			bottom: -(($bottomHeight - $buttonSize) / 2);
+			left: $buttonMargin * 4 + 3 * $buttonSize;
+		}
+
 		.Button {
 			position: absolute;
 			bottom: ($bottomHeight - $buttonSize) / 2;
@@ -73,7 +79,7 @@
 		}
 
 		$iconWidth : 15px;
-		$numButtons : 3;
+		$numButtons : 4;
 		$totalButtonWidth : $buttonSize * $numButtons + $buttonMargin * 2 * $numButtons + 10px;
 
 		#SliderContainer {

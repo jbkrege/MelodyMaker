@@ -108,8 +108,9 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
         );
     };
 
-
-    ML.prototype.generatePattern = function(){
+    ML.prototype.generatePattern = function(temperature){
+        console.log("calltemp: ",temperature);
+        this.temperature = temperature;
         var thisML = this;
         var seed = this.getGridState();
         var seedLength = this.noteSequenceLength(seed);
@@ -124,6 +125,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
                 );
         }
         var emptySearch = true;
+        console.log("thisML.temperature",thisML.temperature);
         for (var i = 0; i < this.numPredictionTries; i++){
             this.rnn
                 .continueSequence(seedSeq, (Config.gridWidth-seedLength), thisML.temperature)
@@ -136,7 +138,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
                             }
                         }
                         emptySearch = false;
-                        break;
+                        return;
                     } else {
                         //Nothing, let the loop try again
                     }
@@ -145,7 +147,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
         if (emptySearch === true){
             // Alert the user, so that they don't think its broken
             // TODO: Get a better alert (i.e. interface/FadeAlert.js)
-            setTimeout(function() { alert("The AI likes the melody as is, and doesn't predict anything new."); }, 1);
+            // setTimeout(function() { alert("The AI likes the melody as is, and doesn't predict anything new."); }, 1);
         }
     };
 

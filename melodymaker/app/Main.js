@@ -40,8 +40,8 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 			return grid.getState();
 		};
 
-		bottom.generatePattern = function() {
-			ml.generatePattern();
+		bottom.generatePattern = function(temperature) {
+			ml.generatePattern(temperature);
 		};
 
 		var player = new Player();
