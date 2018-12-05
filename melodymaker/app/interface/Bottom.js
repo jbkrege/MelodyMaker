@@ -53,7 +53,7 @@ function(bottomStyle, Slider, Transport, Orientation, Grid, PrecisionInputs, Kno
 		this._directions = ['none', 'right'];
 		this._directionIndex = 0;
 
-		this.slider = new Slider(this._controlsContainer);
+		// this.slider = new Slider(this._controlsContainer);
 
 		this.onDirection = function() {};
 		this.removeML = function() {};
@@ -62,6 +62,7 @@ function(bottomStyle, Slider, Transport, Orientation, Grid, PrecisionInputs, Kno
 		this._orientation = new Orientation(this._rotated.bind(this));
 
 		// Knob docs: https://www.npmjs.com/package/knob
+		// Cooler lookin knob: https://www.cssscript.com/touch-enabled-knob-input-javascript-knob-input/
 		this._temperatureKnob = Knob({
 			label: 'Temperature',
 			className: 'LofiKnob',
@@ -73,9 +74,54 @@ function(bottomStyle, Slider, Transport, Orientation, Grid, PrecisionInputs, Kno
 			step: 1,
 			width: 60
 		});
+		this._temperatureKnob.id = "temperatureKnob";
 		this._temperatureKnob.value = 50;
 		this._controlsContainer.appendChild(this._temperatureKnob);
+
+		this._tempoKnob = Knob({
+			label: 'Tempo',
+			className: 'LofiKnob',
+			value: 120,
+			angleOffset: -125,
+			angleArc: 250,
+			min: 60,
+			max: 200,
+			step: 2,
+			width: 60
+		});
+		this._tempoKnob.id = "tempoKnob";
+		this._tempoKnob.value = 120;
+		this._tempoKnob.onchange = this._tempoChange;
+		this._controlsContainer.appendChild(this._tempoKnob);
+
+		this._settingsButton = document.createElement('div');
+		this._settingsButton.id = 'settingsButton';
+		this._settingsButton.classList.add('passive')
+		this._settingsButton.classList.add('Button')
+		this._settingsButton.classList.add('icon-svg_hamburger_menu');
+		this._controlsContainer.appendChild(this._settingsButton);
+		this._settingsButton.addEventListener('click',this._settingsButtonClicked.bind(this));
 	};
+
+	Bottom.prototype._tempoChange = function() {
+		console.log("TempoChange",this.value);
+		Transport.bpm.value = this.value;
+	}
+
+	Bottom.prototype._settingsButtonClicked = function(e){
+		e.preventDefault();
+		//
+		// Stop play
+		//
+		if (this._settingsButton.classList.contains('passive')){
+			this._settingsButton.classList.remove('passive');
+			this._settingsButton.classList.add('active');
+		}
+		else {
+			this._settingsButton.classList.remove('active')
+			this._settingsButton.classList.add('passive');
+		}
+	}
 
 	Bottom.prototype._MLClicked = function(e) {
 		e.preventDefault();

@@ -22,7 +22,14 @@
 		.LofiKnob {
 			position: absolute;
 			bottom: -(($bottomHeight - $buttonSize) / 2);
-			left: $buttonMargin * 4 + 3 * $buttonSize;
+		}
+
+		#temperatureKnob {
+			left: $buttonMargin * 5 + 3 * $buttonSize;
+		}
+
+		#tempoKnob {
+			left: $buttonMargin * 7 + 3 * $buttonSize;
 		}
 
 		.Button {
@@ -42,6 +49,24 @@
 			transform: scale(1.1);
 		}
 
+		#settingsButton.passive {
+			left: $buttonMargin * 8 + 5 * $buttonSize;
+			background-color: #fff;
+			font-size: 25px;
+			color: grey;
+			width: $buttonSize;
+			height: $buttonSize;
+		}
+
+		#settingsButton.active {
+			left: $buttonMargin * 8 + 5 * $buttonSize;
+			background-color: $orange;
+			font-size: 25px;
+			color: white;
+			width: $buttonSize;
+			height: $buttonSize;
+		}
+
 		#PlayButton {
 			left: $buttonMargin;
 			background-color: $blue;
@@ -54,7 +79,6 @@
 			background-color: #fff;
 			font-size: 60px;
 			color: grey;
-
 		}
 
 		#MLButton.active {
