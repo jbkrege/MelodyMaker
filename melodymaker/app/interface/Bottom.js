@@ -108,14 +108,14 @@ function(bottomStyle, Slider, Transport, Orientation, Grid, PrecisionInputs, Kno
 		Transport.bpm.value = this.value;
 	}
 
-	Bottom.prototype._settingsButtonClicked = function(e){
-		e.preventDefault();
-		//
-		// Stop play
-		//
+	Bottom.prototype._settingsButtonClicked = function(){
 		if (this._settingsButton.classList.contains('passive')){
 			this._settingsButton.classList.remove('passive');
 			this._settingsButton.classList.add('active');
+			// Get the modal
+			var modal = document.getElementById('myModal');
+			// When the user clicks on the button, open the modal 
+			modal.style.display = "block";
 		}
 		else {
 			this._settingsButton.classList.remove('active')

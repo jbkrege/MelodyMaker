@@ -15,8 +15,8 @@
  */
 
 require(['domready', 'style/main.scss', 'grid/Grid', 'interface/Bottom', 'sound/Sequencer', 
-	'Tone/core/Transport', 'sound/Player', 'node_modules/startaudiocontext', 'grid/ML'],
-function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartAudioContext, ML) {
+	'Tone/core/Transport', 'sound/Player', 'node_modules/startaudiocontext', 'grid/ML', 'data/Config'],
+function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartAudioContext, ML, Config) {
 	domReady(function() {
 
 		window.parent.postMessage("loaded", "*");
@@ -59,6 +59,58 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 			grid.select(-1);
 		});
 
+		//
+		// Modal
+		//
+
+		// Get the <span> element that closes the modal
+		var span = document.getElementsByClassName("close")[0];
+
+		// Get the modal
+		var modal = document.getElementById('myModal');
+
+		// When the user clicks on <span> (x), close the modal
+		span.onclick = function() {
+		    modal.style.display = "none";
+		    bottom._settingsButtonClicked();
+		}
+
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function(event) {
+		    if (event.target == modal) {
+		        modal.style.display = "none";
+		        bottom._settingsButtonClicked();
+		    }
+		}
+
+		// Add models to settings modal
+
+	//   <input type="radio" name="model" value="m1"><span>M1</span><br>
+	// 	 <input type="radio" name="model" value="m2"><span>M2</span><br>
+		var modelDiv = document.getElementById("ModelSettings");
+		for (var i = 0; i < Config.modelNames.length; i++){
+			console.log("Adding model ",i,Config.modelNames[i]);
+			var button = document.createElement("input");
+			button.setAttribute("name","model");
+			button.setAttribute("type","radio");
+			button.modelIndex = i;
+			var label = document.createElement("span");
+			label.innerHTML = Config.modelNames[i];
+			modelDiv.appendChild(button);
+			modelDiv.appendChild(label);
+			modelDiv.appendChild(document.createElement("br"));
+			
+			// Update settings on click
+			button.addEventListener("click", function(){
+				console.log("Model: ",this.modelIndex);
+				Config.activeModel = this.modelIndex;
+			})
+
+		}
+
+		//
+		// Keyboard shortcuts
+		//
 		document.body.addEventListener('keyup', function(e) {
 			var key = e.which;
 			//
