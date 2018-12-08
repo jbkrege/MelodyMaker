@@ -18,7 +18,7 @@ require(['domready', 'style/main.scss', 'grid/Grid', 'interface/Bottom', 'sound/
 	'Tone/core/Transport', 'sound/Player', 'node_modules/startaudiocontext', 'grid/ML', 'data/Config'],
 function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartAudioContext, ML, Config) {
 	domReady(function() {
-
+		Config.gridWidth = Config.subdivisions*Config.beatsPerMeasure*Config.numMeasures;
 		window.parent.postMessage("loaded", "*");
 		var grid = new Grid(document.body);
 		var ml = new ML(document.body);
@@ -62,6 +62,7 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 		//
 		// Modal
 		//
+		// TODO: Refactor this into its own file
 
 		// Get the <span> element that closes the modal
 		var span = document.getElementsByClassName("close")[0];
@@ -84,16 +85,15 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 		}
 
 		// Add models to settings modal
-
-	//   <input type="radio" name="model" value="m1"><span>M1</span><br>
-	// 	 <input type="radio" name="model" value="m2"><span>M2</span><br>
 		var modelDiv = document.getElementById("ModelSettings");
 		for (var i = 0; i < Config.modelNames.length; i++){
-			console.log("Adding model ",i,Config.modelNames[i]);
 			var button = document.createElement("input");
 			button.setAttribute("name","model");
 			button.setAttribute("type","radio");
 			button.modelIndex = i;
+			if (i == Config.activeModel) {
+				button.checked = true;
+			}
 			var label = document.createElement("span");
 			label.innerHTML = Config.modelNames[i];
 			modelDiv.appendChild(button);
@@ -102,12 +102,22 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 			
 			// Update settings on click
 			button.addEventListener("click", function(){
-				console.log("Model: ",this.modelIndex);
 				Config.activeModel = this.modelIndex;
+				ml._initModel(this.modelIndex);
 			})
-
 		}
 
+		// Grid Settings functionality
+		var measureNumInput = document.getElementById("MeasureNum");
+		measureNumInput.defaultValue = Config.numMeasures;
+		measureNumInput.onchange = function(){
+
+			Config.numMeasures = this.value;
+			console.log(Config.numMeasures);
+			Config.gridWidth = Config.subdivisions*Config.beatsPerMeasure*Config.numMeasures;
+			grid._resize();
+		};
+ 
 		//
 		// Keyboard shortcuts
 		//

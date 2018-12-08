@@ -16,17 +16,23 @@
 
 define({
 	'gridHeight' : 15,
-	'gridWidth' : 8,
+	'numMeasures' : 1,
+	'subdivisions': 2,
+	'beatsPerMeasure' : 4,
 	'tileMargin' : 2,
 	'notes' : ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B','C'],
 	'pitches' : ['C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4','C5'],
 	'activeTime' : 200,
+
+	// ML stuff
+	'numModels' : 2,
 	'modelUrls' : [// A 36-class one-hot MelodyRNN model. Converted from http://download.magenta.tensorflow.org/models/basic_rnn.mag.
 					"https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
-					, 
+					, "http://10.0.0.89:8080/"
 				  ],
 	'modelNames' : ["Google's MelodyRNN", "Folk Rnn"],
 	'activeModel' : 0,
+
 	'singleColor' : true,
 	'playPredictedNotes' : true,
 	'stepsPerQuarter' : 2

@@ -104,7 +104,6 @@ function(bottomStyle, Slider, Transport, Orientation, Grid, PrecisionInputs, Kno
 	};
 
 	Bottom.prototype._tempoChange = function() {
-		console.log("TempoChange",this.value);
 		Transport.bpm.value = this.value;
 	}
 
@@ -130,7 +129,7 @@ function(bottomStyle, Slider, Transport, Orientation, Grid, PrecisionInputs, Kno
 			this._MLButton.classList.remove('passive');
 			this._MLButton.classList.add('active');
 			this.MLActive = true;
-			this.generatePattern(this._temperatureKnob.value);
+			this.generatePattern(this._temperatureKnob.value/100);
 		} else {
 			this._MLButton.classList.remove('active');
 			this._MLButton.classList.add('passive');

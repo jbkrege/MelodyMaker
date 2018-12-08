@@ -27,14 +27,15 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
         this.addTile = function() {};
         this.getGridState = function() {};
 
-        this._initModel();
+        this.models = new Array(Config.numModels);
+        this._initModel(Config.activeModel);
     };
 
-    ML.prototype._initModel = function(){
-        // TODO make model source switchable
-        //this.rnn = new MusicRNN(Config.modelUrls[0]);
-        this.rnn = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn');
-        this.rnn.initialize();
+    ML.prototype._initModel = function(modelIndex){
+        if (!this.models[modelIndex]){
+            this.models[modelIndex] = new mm.MusicRNN(Config.modelUrls[modelIndex]);
+            this.models[modelIndex].initialize(); 
+        }
     };
 
     function noteToMidiNumber(noteName) {
@@ -87,7 +88,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
                     // Make required dict-like object
                     if (x['melody'] != -1){
                         return {
-                        pitch: noteToMidiNumber(Config.pitches[x['melody']]),
+                        pitch: noteToMidiNumber(Config.pitches[Config.gridHeight-x['melody']-1]),
                         startTime: i * 0.5,
                         endTime: (i + 1) * 0.5
                         };
@@ -124,14 +125,15 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
             // seedSeq = mm.sequences.quantizeNoteSequence({quantizationInfo : {"stepsPerQuarter" : Config.stepsPerQuarter}}, 0);
         }
         seedSeq = this._toNoteSequence(seed, seedLength);
-
+        console.log("seedSeq ",seedSeq);
         // Keep searching until the model predicts something
         var emptySearch = true;
-        for (var i = 0; i < this.numPredictionTries; i++){
-            this.rnn
+        for (var search = 0; (search < this.numPredictionTries) && (emptySearch === true); search++){
+            this.models[Config.activeModel]
                 .continueSequence(seedSeq, (Config.gridWidth-seedLength), thisML.temperature)
                 .then(function(result) {
-                    if (result['notes'].length !== 0){
+                    if ((result['notes'].length !== 0) && (emptySearch == true)){
+                        console.log("result",result);
                         // Convert protobuf to array
                         var predictedNotes = thisML.fromNoteSequence(result);
                         // Iterate through array and add notes to grid
@@ -190,8 +192,8 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
         //*
         var res = [], notes = pattern['notes'], currNoteIndex = 0;
         for (var step = 0 ; step < pattern['totalQuantizedSteps'] ; step++){
-            if ((currNoteIndex < (notes.length-1)) && (step === notes[currNoteIndex]['quantizedStartStep'])){
-                res.push(Config.gridHeight - (1 + Config.pitches.indexOf(this.midiNumberToNote(notes[currNoteIndex]['pitch']))));
+            if ((currNoteIndex < notes.length) && (step === notes[currNoteIndex]['quantizedStartStep'])){
+                res.push(Config.gridHeight-Config.pitches.indexOf(this.midiNumberToNote(notes[currNoteIndex]['pitch']))-1);
                 currNoteIndex++;
             } else {
                 res.push(-1);
