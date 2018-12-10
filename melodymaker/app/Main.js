@@ -47,6 +47,7 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 		var player = new Player();
 
 		var seq = new Sequencer(function(time, step) {
+			console.log("Original Seq",time,step);
 			var notes = grid.select(step);
 			player.play(notes, time);
 		});
@@ -58,12 +59,12 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 		Transport.on('stop', function() {
 			grid.select(-1);
 		});
+		Transport.setLoopPoints(0,Config.numMeasures.toString()+"m")
 
 		//
 		// Modal
 		//
 		// TODO: Refactor this into its own file
-
 		// Get the <span> element that closes the modal
 		var settingsSpan = document.getElementById("closeSettings");
         var introSpan = document.getElementById("closeIntro");
@@ -124,12 +125,50 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 		var measureNumInput = document.getElementById("MeasureNum");
 		measureNumInput.defaultValue = Config.numMeasures;
 		measureNumInput.onchange = function(){
-
+			var diff, i, harmonyOn = false;
+			
+			// If harmony is on, then we have to turn it off first
+			if (bottom._directionIndex != 0){
+				harmonyOn = true;
+				bottom._directionClicked();
+			}
 			Config.numMeasures = this.value;
-			Config.gridWidth = Config.subdivisions*Config.beatsPerMeasure*Config.numMeasures;
+			var newWidth = Config.subdivisions*Config.beatsPerMeasure*Config.numMeasures;
+			diff = newWidth - Config.gridWidth;
+			Config.gridWidth = newWidth;
+			if (diff > 1){
+				// Increase size of array 
+				for (i = 0; i < diff ; i++){
+					grid._tiles.push(null);
+					grid._mlTiles.push(null);
+				}
+				console.log("added",diff,"tiles. New length: ",grid._tiles.length);
+			}
+			else {
+				// Decrease size of array
+				for (i = 0; i > diff ; i--){
+					grid._tiles.pop(null);
+					grid._mlTiles.pop(null);
+				}
+				console.log("removed",diff,"tiles. New length: ",grid._tiles.length);
+			}
+			if (harmonyOn){
+				bottom._directionClicked();
+			}
+			else
+			{
+				grid._ai = [];
+			}
+			
 			grid._resize();
+
+			seq.changeSequenceLength(function(time, step) {
+				var notes = grid.select(step);
+				player.play(notes, time);
+			});
+			Transport.setLoopPoints(0,Config.numMeasures.toString()+"m");
+			console.log("tiles",grid._tiles);
 		};
- 
 		//
 		// Keyboard shortcuts
 		//

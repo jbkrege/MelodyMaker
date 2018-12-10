@@ -166,8 +166,8 @@ function(bottomStyle, Slider, Transport, Orientation, Grid, PrecisionInputs, Kno
 	};
 
 
-	Bottom.prototype._directionClicked = function(e) {
-		e.preventDefault();
+	Bottom.prototype._directionClicked = function() {
+		// e.preventDefault();
 		var formerDir = this._directions[this._directionIndex];
 		this._harmony.classList.remove(formerDir);
 		this._directionIndex = (this._directionIndex + 1) % this._directions.length;

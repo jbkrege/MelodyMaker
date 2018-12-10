@@ -25,5 +25,16 @@ define(['Tone/event/Sequence', 'data/Config'], function(Sequence, Config) {
 		this.seq = new Sequence(callback, steps, '8n').start(0);
 	};
 
+	Sequencer.prototype.changeSequenceLength = function(callback) {
+		this.seq.dispose();
+		console.log("Sequencer resize called");
+		console.log("gridWidth: ", Config.gridWidth);
+		var steps = [];
+		for (var i = 0; i < Config.gridWidth; i++) {
+			steps.push(i);
+		}
+		this.seq = new Sequence(callback, steps, '8n').start(0);
+	}
+
 	return Sequencer;
 });

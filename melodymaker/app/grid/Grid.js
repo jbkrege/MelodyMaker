@@ -58,7 +58,9 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
         this.mouseDrag = false;
         this.lastDragTile = {x: null, y: null};
 
+		this.changeSequenceLength = function() {};
 		this._resize();
+
 		window.addEventListener('resize', this._resize.bind(this));
 
 		//do the drawing
@@ -127,6 +129,7 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 		this.tileWidth = this.width / Config.gridWidth;
 		this.tileHeight = this.height / Config.gridHeight;
 		this._drawLines();
+		// this.changeSequenceLength();
 	};
 
 	Grid.prototype._tileAtPosition = function(x, y) {
@@ -355,6 +358,7 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 			}
 			this._iterationCounter++;
 		}*/
+		console.log("Grid Select: ",ret);
 		return ret;
 	};
 

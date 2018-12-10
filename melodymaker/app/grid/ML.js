@@ -116,7 +116,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
         var seedLength = this.noteSequenceLength(seed);
         var seedSeq;
         if (!seedLength){
-            console.log("Picking a random note to seed");
+            console.log("Seeding from random note");
             var randomNote = Math.floor(Config.gridHeight * Math.random());
             seed = [{"melody": randomNote, "harmony":-1}];
             seedLength = 1;
@@ -125,7 +125,6 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
             // seedSeq = mm.sequences.quantizeNoteSequence({quantizationInfo : {"stepsPerQuarter" : Config.stepsPerQuarter}}, 0);
         }
         seedSeq = this._toNoteSequence(seed, seedLength);
-        console.log("seedSeq ",seedSeq);
         // Keep searching until the model predicts something
         var emptySearch = true;
         for (var search = 0; (search < this.numPredictionTries) && (emptySearch === true); search++){
@@ -133,7 +132,6 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
                 .continueSequence(seedSeq, (Config.gridWidth-seedLength), thisML.temperature)
                 .then(function(result) {
                     if ((result['notes'].length !== 0) && (emptySearch == true)){
-                        console.log("result",result);
                         // Convert protobuf to array
                         var predictedNotes = thisML.fromNoteSequence(result);
                         // Iterate through array and add notes to grid
