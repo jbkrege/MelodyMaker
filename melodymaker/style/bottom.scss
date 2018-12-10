@@ -88,6 +88,12 @@
 			color: white;
 		}
 
+		.Harmony {
+			background-color: #fff;
+			background-image: url(../images/harmony_off.png);
+			background-size: 100% 100%;
+		}
+		
 		#Harmony {
 			position: absolute;
 			left: $buttonMargin * 3 + 2 * $buttonSize;

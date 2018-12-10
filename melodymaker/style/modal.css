@@ -2,6 +2,37 @@
     width: 1rem;
 }
 
+#introModal {
+    display: block;
+}
+
+/* Informative buttons placed in text */
+.demo {
+    position: relative;
+    border: 1px;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    /*bottom: -30px;*/
+}
+
+#demoComputer {
+    font-size: 2em;
+    bottom:0;
+    bottom: -.25em;
+    margin-bottom: -.5em;
+}
+
+.Harmony {
+    width: 2em;
+    height: 2em;
+    display: inline-block;
+    /*background-color: grey;*/
+    background-image: url(../images/harmony_off.png);
+    background-size: 100% 100%;
+    bottom: -.5em;
+}
+
 /* The Modal (background) */
 .modal {
     display: none; /* Hidden by default */

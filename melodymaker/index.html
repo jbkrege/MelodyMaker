@@ -11,15 +11,39 @@
 </head>
 <body>
 
+
 <!-- The Modal -->
-<div id="myModal" class="modal">
+<div id="introModal" class="modal" id="closeIntro">
   <!-- Modal content -->
   <div class="modal-content">
-    <span class="close">&times;</span>
+    <span class="close" id="closeIntro">&times;</span>
+    <h1>Welcome to Melody Maker!</h1>
+    The future of music making is here! Melody Maker
+    is a suite of melody writting tools for want-to-be composers of all ages and skill levels. Develop your musical ideas in
+    collaboration with AI trained with music written by the masters.
+    <br><br>
+    The interface is modeled after midi piano scrolls often found in DAWs (Digital Audio Workstations). It is diatonic, and in C major, with middle C (C4) in the center of your screen.
+    <br>
+    Press the computer button <div id="demoComputer" class="icon-svg_computer demo"></div> to activate the AI composer. It will expand upon whatever existing melody you have written, providing insight based on its dataset and inspiration. To view available AIs, change the dataset, click on the settings button <div class="icon-svg_hamburger_menu Button passive demo"></div>. For a more random or complex result, turn up the <b>temperature</b> dial in the bottom tool bar.
+    <br>
+    The Directional Harmonisation button <div class="Harmony demo"></div> simply displaces every note you've written by two spaces, but can be a good sourse of inspiration.
+    <br>
+    Open up the settings <div class="icon-svg_hamburger_menu Button passive demo"></div> panel to change other settings, like the length of the sequence, or to view this information again.
+    <br>
+    <p>This project was created by Ben Krege, who dreamed of a tool like this in early 2016, but didn't have the time, expertise, or tools to make it until Fall 2018. Special thanks to Northwestern for funding the project through an undergraduate research grant (URG), and Nick Cline for helping Ben get the grant. Credits to Google Magenta/Tensorlflow teams, who created the neural net code that this application relies upon, and the Chrome Expiriments Team, who's "Melody Maker" app was the basis for the interface.</p>
+  </div>
+</div>
+
+
+<!-- The Modal -->
+<div id="settingsModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" id="closeSettings">&times;</span>
     <h1>Settings</h1>
     <div id="ModelSettings">
         <form>
-            <b>Model</b>
+            <b>Deep Generative Models</b>
         </form>
     </div>
     <br>
@@ -28,8 +52,19 @@
             <b>Grid Settings</b><br>
             <span>Number of measures: </span>
             <input id="MeasureNum" type="text" name="">
-        </form>        
+        </form>
     </div>
+    <br>
+    <b>Info</b><br>
+    The interface is modeled after midi piano scrolls often found in DAWs (Digital Audio Workstations). It is diatonic, and in C major, with middle C (C4) in the center of your screen.
+    <br>
+    Press the computer button <div id="demoComputer" class="icon-svg_computer demo"></div> to activate the AI composer. It will expand upon whatever existing melody you have written, providing insight based on its dataset and inspiration. To view available AIs, change the dataset, click on the settings button <div class="icon-svg_hamburger_menu Button passive demo"></div>. For a more random or complex result, turn up the <b>temperature</b> dial in the bottom tool bar.
+    <br>
+    The Directional Harmonisation button <div class="Harmony demo"></div> simply displaces every note you've written by two spaces, but can be a good sourse of inspiration.
+    <br>
+    Open up the settings <div class="icon-svg_hamburger_menu Button passive demo"></div> panel to change other settings, like the length of the sequence, or to view this information again.
+    <br>
+    <p>This project was created by Ben Krege, who dreamed of a tool like this in early 2016, but didn't have the time, expertise, or tools to make it until Fall 2018. Special thanks to Northwestern for funding the project through an undergraduate research grant (URG), and Nick Cline for helping Ben get the grant. Credits to Google Magenta/Tensorlflow teams, who created the neural net code that this application relies upon, and the Chrome Expiriments Team, who's "Melody Maker" app was the basis for the interface.</p>
   </div>
 </div>
 

@@ -112,7 +112,7 @@ function(bottomStyle, Slider, Transport, Orientation, Grid, PrecisionInputs, Kno
 			this._settingsButton.classList.remove('passive');
 			this._settingsButton.classList.add('active');
 			// Get the modal
-			var modal = document.getElementById('myModal');
+			var modal = document.getElementById('settingsModal');
 			// When the user clicks on the button, open the modal 
 			modal.style.display = "block";
 		}

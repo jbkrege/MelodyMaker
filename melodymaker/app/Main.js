@@ -65,23 +65,36 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 		// TODO: Refactor this into its own file
 
 		// Get the <span> element that closes the modal
-		var span = document.getElementsByClassName("close")[0];
+		var settingsSpan = document.getElementById("closeSettings");
+        var introSpan = document.getElementById("closeIntro");
 
 		// Get the modal
-		var modal = document.getElementById('myModal');
+		var introModal = document.getElementById('introModal');
+        var settingsModal = document.getElementById("settingsModal")
 
+        //
 		// When the user clicks on <span> (x), close the modal
-		span.onclick = function() {
-		    modal.style.display = "none";
+		//
+        settingsSpan.onclick = function() {
+		    settingsModal.style.display = "none";
 		    bottom._settingsButtonClicked();
 		}
 
+        introSpan.onclick = function() {
+            introModal.style.display = "none";
+        }
+
+        //
 		// When the user clicks anywhere outside of the modal, close it
-		window.onclick = function(event) {
-		    if (event.target == modal) {
-		        modal.style.display = "none";
+		//
+        window.onclick = function(event) {
+		    if (event.target == settingsModal) {
+		        settingsModal.style.display = "none";
 		        bottom._settingsButtonClicked();
 		    }
+            else if (event.target == introModal) {
+                introModal.style.display = "none";
+            }
 		}
 
 		// Add models to settings modal
@@ -113,7 +126,6 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 		measureNumInput.onchange = function(){
 
 			Config.numMeasures = this.value;
-			console.log(Config.numMeasures);
 			Config.gridWidth = Config.subdivisions*Config.beatsPerMeasure*Config.numMeasures;
 			grid._resize();
 		};
