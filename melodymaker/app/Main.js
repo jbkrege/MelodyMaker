@@ -15,9 +15,30 @@
  */
 
 require(['domready', 'style/main.scss', 'grid/Grid', 'interface/Bottom', 'sound/Sequencer', 
-	'Tone/core/Transport', 'sound/Player', 'node_modules/startaudiocontext', 'grid/ML', 'data/Config'],
-function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartAudioContext, ML, Config) {
+	'Tone/core/Transport', 'sound/Player',
+	 'node_modules/startaudiocontext', 'grid/ML', 'data/Config',
+	  'node_modules/firebase/app', 'node_modules/@google-cloud/storage'],
+function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport,
+ Player, StartAudioContext, ML, Config, Firebase, Storage) {
 	domReady(function() {
+
+		var fConfig = {
+		    apiKey: "AIzaSyCj6NshDarYyN80l06qQjxYRuu1hbQYqAo",
+		    authDomain: "melodymaker-17f94.firebaseapp.com",
+		    databaseURL: "https://melodymaker-17f94.firebaseio.com",
+		    projectId: "melodymaker-17f94",
+		    storageBucket: "melodymaker-17f94.appspot.com",
+		    messagingSenderId: "976762320760"
+		};
+		
+		Firebase.initializeApp(fConfig);
+
+		var storage = Storage({
+			projectid: "melodymaker-17f94",
+			storageBucket: "melodymaker-17f94.appspot.com"
+		});
+		var storageRef = storage.ref();
+
 		Config.gridWidth = Config.subdivisions*Config.beatsPerMeasure*Config.numMeasures;
 		window.parent.postMessage("loaded", "*");
 		var grid = new Grid(document.body);
@@ -47,7 +68,6 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 		var player = new Player();
 
 		var seq = new Sequencer(function(time, step) {
-			console.log("Original Seq",time,step);
 			var notes = grid.select(step);
 			player.play(notes, time);
 		});
@@ -142,7 +162,6 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 					grid._tiles.push(null);
 					grid._mlTiles.push(null);
 				}
-				console.log("added",diff,"tiles. New length: ",grid._tiles.length);
 			}
 			else {
 				// Decrease size of array
@@ -150,7 +169,6 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport, Player, StartA
 					grid._tiles.pop(null);
 					grid._mlTiles.pop(null);
 				}
-				console.log("removed",diff,"tiles. New length: ",grid._tiles.length);
 			}
 			if (harmonyOn){
 				bottom._directionClicked();

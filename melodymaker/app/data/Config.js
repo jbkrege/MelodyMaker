@@ -30,7 +30,7 @@ define({
 	'numModels' : 2,
 	'modelUrls' : [// A 36-class one-hot MelodyRNN model. Converted from http://download.magenta.tensorflow.org/models/basic_rnn.mag.
 					"https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
-					, "http://10.0.0.89:8080/"
+					, "gs://melodymaker-17f94.appspot.com/folk_model/"
 				  ],
 	'modelNames' : ["Google's MelodyRNN", "Folk Rnn"],
 	'activeModel' : 0,

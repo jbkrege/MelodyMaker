@@ -16,6 +16,9 @@
 
 var webpack = require("webpack");
 var path = require("path");
+// var CopyWebpackPlugin = require('node_modules/copy-webpack-plugin');
+
+// var model = require('app/data/models/group1-shard1of1.bin');
 
 var PROD = JSON.parse(process.env.PROD_ENV || '0');
 
@@ -34,9 +37,12 @@ module.exports = {
         modulesDirectories : ["style", "app", "third_party/Tone.js/", "third_party", "node_modules"],
     },
     plugins: PROD ? [
-        new webpack.optimize.UglifyJsPlugin({minimize: true})
+        new webpack.optimize.UglifyJsPlugin({minimize: true}),
       ] : [],
-     module: {
+    node: {
+        fs: 'empty'
+    },
+    module: {
         loaders: [
             // {
             //     test: /\.js$/,
@@ -61,6 +67,10 @@ module.exports = {
                 test   : /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
                 loader : "file-loader?name=images/font/[hash].[ext]"
             }
+            // , {
+            //     test: /\.bin$/,
+            //     use: 'raw-loader'
+            // }
         ]
     }
 };

@@ -358,7 +358,6 @@ define(['style/grid.scss', 'data/Config', 'data/Colors', 'grid/Tile', 'grid/AI',
 			}
 			this._iterationCounter++;
 		}*/
-		console.log("Grid Select: ",ret);
 		return ret;
 	};
 

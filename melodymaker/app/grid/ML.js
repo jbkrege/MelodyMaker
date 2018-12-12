@@ -24,6 +24,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
 
         this.temperature = 1;
 
+        // Prototypes for functions defined elsewhere
         this.addTile = function() {};
         this.getGridState = function() {};
 
