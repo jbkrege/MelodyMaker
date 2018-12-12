@@ -10,7 +10,7 @@ define(['data/Colors', 'data/Config', 'Tone/core/Transport',
     function(Colors, Config, Transport, mm, Grid) {
     var ML = function(container) {
         this.active = false;
-        this.numPredictionTries = 5;
+        this.numPredictionTries = 15;
         //a reference to the tile
         //this.tile = tile;
 

@@ -1,9 +1,7 @@
 
 build
 
-
-
-
+app/data/Firebase.config.js
 app (copy)
 
 node_modules

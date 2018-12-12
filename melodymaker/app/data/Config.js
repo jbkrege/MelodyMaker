@@ -32,7 +32,7 @@ define({
 					"https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
 					, "gs://melodymaker-17f94.appspot.com/folk_model/"
 				  ],
-	'modelNames' : ["Google's MelodyRNN", "Folk Rnn"],
+	'modelNames' : ["Google's MelodyRNN", "Folk Rnn [Currently under maintenance. Sorry!]"],
 	'activeModel' : 0,
 
 	'singleColor' : true,
