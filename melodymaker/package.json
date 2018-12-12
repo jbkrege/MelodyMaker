@@ -9,7 +9,6 @@
   "author": "Yotam Mann & Ben Krege",
   "dependencies": {
     "@babel/core": "^7.1.2",
-    "@google-cloud/storage": "^2.3.1",
     "@magenta/music": "^1.2.3",
     "autoprefixer": "^6.3.1",
     "autoprefixer-loader": "^3.2.0",

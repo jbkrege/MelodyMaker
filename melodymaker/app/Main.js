@@ -17,9 +17,9 @@
 require(['domready', 'style/main.scss', 'grid/Grid', 'interface/Bottom', 'sound/Sequencer', 
 	'Tone/core/Transport', 'sound/Player',
 	 'node_modules/startaudiocontext', 'grid/ML', 'data/Config',
-	  'node_modules/firebase/app', 'node_modules/@google-cloud/storage'],
+	  'node_modules/firebase/app'], //'node_modules/@google-cloud/storage'],
 function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport,
- Player, StartAudioContext, ML, Config, Firebase, Storage) {
+ Player, StartAudioContext, ML, Config, Firebase) {
 	domReady(function() {
 
 		var fConfig = {
