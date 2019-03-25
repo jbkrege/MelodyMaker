@@ -33,53 +33,173 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport,
 		
 		Firebase.initializeApp(fConfig);
 
-		var storage = Storage({
-			projectid: "melodymaker-17f94",
-			storageBucket: "melodymaker-17f94.appspot.com"
-		});
-		var storageRef = storage.ref();
 
-		Config.gridWidth = Config.subdivisions*Config.beatsPerMeasure*Config.numMeasures;
-		window.parent.postMessage("loaded", "*");
-		var grid = new Grid(document.body);
-		var ml = new ML(document.body);
-		var bottom = new Bottom(document.body);
+		function initializeInterfaceAndAudio(){
+			Config.gridWidth = Config.subdivisions*Config.beatsPerMeasure*Config.numMeasures;
+			window.parent.postMessage("loaded", "*");
+			var grid = new Grid(document.body);
+			var ml = new ML(document.body);
+			var bottom = new Bottom(document.body);
 
-		bottom.onDirection = function(dir) {
-			grid.setDirection(dir);
+			bottom.onDirection = function(dir) {
+				grid.setDirection(dir);
+			};
+
+			bottom.removeML = function() {
+				grid.removeML();
+			};
+
+			ml.addTile = function(x, y, hover, ml, prob){
+				grid._addTile(x, y, hover, ml, prob);
+			};
+
+			ml.getGridState = function(){
+				return grid.getState();
+			};
+
+			bottom.generatePattern = function(temperature) {
+				ml.generatePattern(temperature);
+			};
+
+			var player = new Player();
+
+			var seq = new Sequencer(function(time, step) {
+				var notes = grid.select(step);
+				player.play(notes, time);
+			});
+
+			grid.onNote = function(note) {
+				player.tap(note);
+			};
+
+			Transport.on('stop', function() {
+				grid.select(-1);
+			});
+			Transport.setLoopPoints(0,Config.numMeasures.toString()+"m");
+
+			// Add models to settings modal
+			var modelDiv = document.getElementById("ModelSettings");
+			for (var i = 0; i < Config.modelNames.length; i++){
+				var button = document.createElement("input");
+				button.setAttribute("name","model");
+				button.setAttribute("type","radio");
+				button.modelIndex = i;
+				if (i == Config.activeModel) {
+					button.checked = true;
+				}
+				var label = document.createElement("span");
+				label.innerHTML = Config.modelNames[i];
+				modelDiv.appendChild(button);
+				modelDiv.appendChild(label);
+				modelDiv.appendChild(document.createElement("br"));
+				
+				// Update settings on click
+				button.addEventListener("click", function(){
+					Config.activeModel = this.modelIndex;
+					ml._initModel(this.modelIndex);
+				})
+			}
+
+			// Grid Settings functionality
+			var measureNumInput = document.getElementById("MeasureNum");
+			measureNumInput.defaultValue = Config.numMeasures;
+			measureNumInput.onchange = function(){
+				var diff, i, harmonyOn = false;
+				
+				// If harmony is on, then we have to turn it off first
+				if (bottom._directionIndex != 0){
+					harmonyOn = true;
+					bottom._directionClicked();
+				}
+				Config.numMeasures = this.value;
+				var newWidth = Config.subdivisions*Config.beatsPerMeasure*Config.numMeasures;
+				diff = newWidth - Config.gridWidth;
+				Config.gridWidth = newWidth;
+				if (diff > 1){
+					// Increase size of array 
+					for (i = 0; i < diff ; i++){
+						grid._tiles.push(null);
+						grid._mlTiles.push(null);
+					}
+				}
+				else {
+					// Decrease size of array
+					for (i = 0; i > diff ; i--){
+						grid._tiles.pop(null);
+						grid._mlTiles.pop(null);
+					}
+				}
+				if (harmonyOn){
+					bottom._directionClicked();
+				}
+				else
+				{
+					grid._ai = [];
+				}
+				
+				grid._resize();
+
+				seq.changeSequenceLength(function(time, step) {
+					var notes = grid.select(step);
+					player.play(notes, time);
+				});
+				Transport.setLoopPoints(0,Config.numMeasures.toString()+"m");
+				console.log("tiles",grid._tiles);
+			};
+			//
+			// Keyboard shortcuts
+			//
+			document.body.addEventListener('keyup', function(e) {
+				var key = e.which;
+				//
+				// Pause/play on spacebar
+				//
+				if (key === 32){
+					bottom._playClicked(e);
+				}
+				//
+				// Move last note on arrow press
+				//
+				else if (key === 37){
+					// Left arrow pressed
+					// grid.lastDragTile
+				}
+				else if (key === 39){
+					// Right arrow pressed
+				}
+				else if (key === 38){
+					// Up arrow pressed
+				}
+				else if (key === 40){
+					// Down arrow pressed
+				}
+			})
+
+			//send the ready message to the parent
+			var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+			var isAndroid = /Android/.test(navigator.userAgent) && !window.MSStream;
+
+			//full screen button on iOS
+			if (isIOS || isAndroid){
+				//make a full screen element and put it in front
+				var iOSTapper = document.createElement("div");
+				iOSTapper.id = "iOSTap";
+				document.body.appendChild(iOSTapper);
+				new StartAudioContext(Transport.context, iOSTapper).then(function() {
+					iOSTapper.remove();
+					window.parent.postMessage('ready','*');
+				});
+			} else {
+				window.parent.postMessage('ready','*');
+			}
+			console.log("Initialized Everything");
 		};
 
-		bottom.removeML = function() {
-			grid.removeML();
-		};
-
-		ml.addTile = function(x, y, hover, ml, prob){
-			grid._addTile(x, y, hover, ml, prob);
-		};
-
-		ml.getGridState = function(){
-			return grid.getState();
-		};
-
-		bottom.generatePattern = function(temperature) {
-			ml.generatePattern(temperature);
-		};
-
-		var player = new Player();
-
-		var seq = new Sequencer(function(time, step) {
-			var notes = grid.select(step);
-			player.play(notes, time);
-		});
-
-		grid.onNote = function(note) {
-			player.tap(note);
-		};
-
-		Transport.on('stop', function() {
-			grid.select(-1);
-		});
-		Transport.setLoopPoints(0,Config.numMeasures.toString()+"m")
+		// var storage = Storage({
+		// 	projectid: "melodymaker-17f94",
+		// 	storageBucket: "melodymaker-17f94.appspot.com"
+		// });
+		// var storageRef = storage.ref();
 
 		//
 		// Modal
@@ -103,6 +223,7 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport,
 
         introSpan.onclick = function() {
             introModal.style.display = "none";
+            initializeInterfaceAndAudio();
         }
 
         //
@@ -115,123 +236,8 @@ function(domReady, mainStyle, Grid, Bottom, Sequencer, Transport,
 		    }
             else if (event.target == introModal) {
                 introModal.style.display = "none";
+                initializeInterfaceAndAudio();
             }
-		}
-
-		// Add models to settings modal
-		var modelDiv = document.getElementById("ModelSettings");
-		for (var i = 0; i < Config.modelNames.length; i++){
-			var button = document.createElement("input");
-			button.setAttribute("name","model");
-			button.setAttribute("type","radio");
-			button.modelIndex = i;
-			if (i == Config.activeModel) {
-				button.checked = true;
-			}
-			var label = document.createElement("span");
-			label.innerHTML = Config.modelNames[i];
-			modelDiv.appendChild(button);
-			modelDiv.appendChild(label);
-			modelDiv.appendChild(document.createElement("br"));
-			
-			// Update settings on click
-			button.addEventListener("click", function(){
-				Config.activeModel = this.modelIndex;
-				ml._initModel(this.modelIndex);
-			})
-		}
-
-		// Grid Settings functionality
-		var measureNumInput = document.getElementById("MeasureNum");
-		measureNumInput.defaultValue = Config.numMeasures;
-		measureNumInput.onchange = function(){
-			var diff, i, harmonyOn = false;
-			
-			// If harmony is on, then we have to turn it off first
-			if (bottom._directionIndex != 0){
-				harmonyOn = true;
-				bottom._directionClicked();
-			}
-			Config.numMeasures = this.value;
-			var newWidth = Config.subdivisions*Config.beatsPerMeasure*Config.numMeasures;
-			diff = newWidth - Config.gridWidth;
-			Config.gridWidth = newWidth;
-			if (diff > 1){
-				// Increase size of array 
-				for (i = 0; i < diff ; i++){
-					grid._tiles.push(null);
-					grid._mlTiles.push(null);
-				}
-			}
-			else {
-				// Decrease size of array
-				for (i = 0; i > diff ; i--){
-					grid._tiles.pop(null);
-					grid._mlTiles.pop(null);
-				}
-			}
-			if (harmonyOn){
-				bottom._directionClicked();
-			}
-			else
-			{
-				grid._ai = [];
-			}
-			
-			grid._resize();
-
-			seq.changeSequenceLength(function(time, step) {
-				var notes = grid.select(step);
-				player.play(notes, time);
-			});
-			Transport.setLoopPoints(0,Config.numMeasures.toString()+"m");
-			console.log("tiles",grid._tiles);
-		};
-		//
-		// Keyboard shortcuts
-		//
-		document.body.addEventListener('keyup', function(e) {
-			var key = e.which;
-			//
-			// Pause/play on spacebar
-			//
-			if (key === 32){
-				bottom._playClicked(e);
-			}
-			//
-			// Move last note on arrow press
-			//
-			else if (key === 37){
-				// Left arrow pressed
-				// grid.lastDragTile
-			}
-			else if (key === 39){
-				// Right arrow pressed
-			}
-			else if (key === 38){
-				// Up arrow pressed
-			}
-			else if (key === 40){
-				// Down arrow pressed
-			}
-		})
-
-		//send the ready message to the parent
-		var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-		var isAndroid = /Android/.test(navigator.userAgent) && !window.MSStream;
-
-		//full screen button on iOS
-		if (isIOS || isAndroid){
-			//make a full screen element and put it in front
-			var iOSTapper = document.createElement("div");
-			iOSTapper.id = "iOSTap";
-			document.body.appendChild(iOSTapper);
-			new StartAudioContext(Transport.context, iOSTapper).then(function() {
-				iOSTapper.remove();
-				window.parent.postMessage('ready','*');
-			});
-		} else {
-			window.parent.postMessage('ready','*');
 		}
 	});
 });
