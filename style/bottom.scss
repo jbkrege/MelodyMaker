@@ -1,0 +1,173 @@
+@import "common.scss";
+@import "icons.scss";
+
+#Bottom {
+	height: $bottomHeight;
+	width: 100%;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	background-color: $lightGrey;
+	box-shadow: inset 0 10px 10px -10px rgba(0,0,0,0.4);
+
+	#Controls {
+
+		max-width: 500px;
+		width: 100%;
+		position: relative;
+		margin-left: auto;
+		margin-right: auto;
+		height: 100%;
+
+		.LofiKnob {
+			position: absolute;
+			bottom: -(($bottomHeight - $buttonSize) / 2);
+		}
+
+		#temperatureKnob {
+			left: $buttonMargin * 5 + 3 * $buttonSize;
+		}
+
+		#tempoKnob {
+			left: $buttonMargin * 7 + 3 * $buttonSize;
+		}
+
+		.Button {
+			position: absolute;
+			bottom: ($bottomHeight - $buttonSize) / 2;
+			width: $buttonSize;
+			height: $buttonSize;
+			line-height: $buttonSize;
+			text-align: center;
+			border-radius: 50%;
+			cursor: pointer;
+			box-shadow: 0 0px 3px 1px rgba(0,0,0,0.2);
+			transition: transform 0.05s;
+		}
+
+		.Button:active {
+			transform: scale(1.1);
+		}
+
+		#settingsButton.passive {
+			left: $buttonMargin * 8 + 5 * $buttonSize;
+			background-color: #fff;
+			font-size: 25px;
+			color: grey;
+			width: $buttonSize;
+			height: $buttonSize;
+		}
+
+		#settingsButton.active {
+			left: $buttonMargin * 8 + 5 * $buttonSize;
+			background-color: $orange;
+			font-size: 25px;
+			color: white;
+			width: $buttonSize;
+			height: $buttonSize;
+		}
+
+		#PlayButton {
+			left: $buttonMargin;
+			background-color: $blue;
+			font-size: 60px;
+			color: white;
+		}
+
+		#MLButton.passive {
+			left: $buttonMargin * 2 + $buttonSize;
+			background-color: #fff;
+			font-size: 60px;
+			color: grey;
+		}
+
+		#MLButton.active {
+			left: $buttonMargin * 2 + $buttonSize;
+			background-color: $orange;
+			font-size: 60px;
+			color: white;
+		}
+
+		.Harmony {
+			background-color: #fff;
+			background-image: url(../images/harmony_off.png);
+			background-size: 100% 100%;
+		}
+		
+		#Harmony {
+			position: absolute;
+			left: $buttonMargin * 3 + 2 * $buttonSize;
+			background-color: #fff;
+			background-image: url(../images/harmony_off.png);
+			background-size: 100% 100%;
+		}
+
+		#Harmony.right {
+			background-image: url(../images/harmony_on.png);
+			background-color: $orange;
+			background-size: 100% 100%;
+		}
+
+		$iconWidth : 15px;
+		$numButtons : 4;
+		$totalButtonWidth : $buttonSize * $numButtons + $buttonMargin * 2 * $numButtons + 10px;
+
+		#SliderContainer {
+			width: calc(100% - #{$totalButtonWidth + $iconWidth * 2});
+			position: absolute;
+			right: $buttonMargin + $iconWidth + 5px;
+			top: 40%;
+
+			.Slider{
+
+				#Rail #Fill {
+					background-color: $blue;
+				}
+
+				#Handle {
+					background-color: $blue;
+				}
+			}
+
+			$iconHeight : 60px;
+
+			#manual-tempo {
+				background: none;
+				border: none;
+				color: $blue;
+				display: block;
+				font-size: 21px;
+				margin: 0;
+				position: absolute;
+				right: -93px;
+				text-decoration: none;
+				top: -4px;
+				width: 57px;
+				
+				@media screen and (max-width: 767px) {
+					display: none;
+				}
+			}
+
+			#Tortoise, #Hare {
+				top: -20px;
+				position: absolute;
+				height: $iconHeight;
+				width: $iconWidth;
+				font-size: $iconHeight;
+				line-height: $iconHeight;
+				pointer-events: none;
+				color: $darkGrey;
+			}
+
+			#Hare {
+				right: 0px;
+			}
+
+			#Tortoise {
+				left: -43px;
+			}
+		}
+	}
+
+}
