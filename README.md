@@ -3,6 +3,7 @@ A web app facilitating collaboration between musicians and deep generative netwo
 
 Completed in Fall 2019 with support from the Northwestern Office of Undergraduate Research.
 
+The application is written with vanilla Javascript and Magenta.js. Hosted on Firebase.
 
 ## Build
 
