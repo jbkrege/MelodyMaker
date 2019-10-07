@@ -1,3 +1,9 @@
+A web app facilitating collaboration between musicians and deep generative networks.
+
+
+Completed in Fall 2019 with support from the Northwestern Office of Undergraduate Research.
+
+
 ## Build
 
 Melody requires node, npm and webpack to build. 
