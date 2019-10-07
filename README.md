@@ -9,7 +9,7 @@ Check it out! https://melodymaker-17f94.firebaseapp.com/
 
 ## Build
 
-Melody requires node, npm and webpack to build. 
+MelodyMaker requires node, npm and webpack to build. 
 
 1. `npm install` to install all the dependencies
 2. `webpack -p` to build the production code
